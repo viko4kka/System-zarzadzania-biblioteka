@@ -28,15 +28,15 @@ npm run start
 npm run start:prod
 ```
 
-API dostępne domyślnie na porcie 3001.
+API dostępne domyślnie na porcie 4000.
 
 Health:
 
-[http://127.0.0.1:3001/api/health](http://127.0.0.1:3001/api/health)
+[http://127.0.0.1:4000/api/health](http://127.0.0.1:4000/api/health)
 
 Swagger UI:
 
-[http://127.0.0.1:3001/api/docs](http://127.0.0.1:3001/api/docs)
+[http://127.0.0.1:4000/api/docs](http://127.0.0.1:4000/api/docs)
 
 ## Baza Danych
 
