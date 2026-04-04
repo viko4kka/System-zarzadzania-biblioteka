@@ -13,8 +13,78 @@ datasource db {
   provider = "postgresql"
 }
 
-// TODO: Zamodelowanie bazy danych
 model User {
   id Int @default(autoincrement()) @id
+  mail String @unique
+  password String
   name String
+  lastname String
+  joindate DateTime @default(now())
+  is_Admin Boolean @default(false)
+  is_Banned Boolean @default(false)
+  is_Removed Boolean @default(false)
+
+  loans Loan[]
+}
+
+model Loan {
+  id_loan Int @default(autoincrement()) @id
+  user_id Int 
+  copy_id Int 
+  start_date DateTime
+  return_date DateTime?
+
+  user User @relation(fields: [user_id], references: [id])
+  copy Copy @relation(fields: [copy_id], references: [id_copy])
+}
+
+model Copy {
+  id_copy Int @default(autoincrement()) @id
+  book_id Int 
+  is_loan Boolean @default(false)
+  is_actual Boolean @default(true)
+
+  book Book @relation(fields: [book_id], references: [id_book])
+  loans Loan[]
+}
+
+model Book {
+  id_book Int @default(autoincrement()) @id
+  title String
+  year Int
+  cover String
+  ISBN String
+  publisher_id Int
+
+  publisher Publisher @relation(fields: [publisher_id], references: [id_publisher])
+  copies Copy[]
+
+  book_authors book_author[]
+}
+
+model book_author {
+  id_book_author Int @id @default(autoincrement())
+
+  book_id Int
+  author_id Int
+
+  book Book @relation(fields: [book_id], references: [id_book])
+  author Author @relation(fields: [author_id], references: [id_author])
+
+  @@unique([book_id, author_id]) 
+}
+
+model Author {
+  id_author Int @default(autoincrement()) @id
+  author_name String
+  author_lastname String
+
+  book_authors book_author[]
+}
+
+model Publisher {
+  id_publisher Int @default(autoincrement()) @id
+  publisher_name String
+
+  books Book[]
 }
