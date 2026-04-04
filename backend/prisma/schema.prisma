@@ -57,24 +57,29 @@ model Book {
   publisher_id Int
 
   publisher Publisher @relation(fields: [publisher_id], references: [id_publisher])
-  book_authors book_author[]
   copies Copy[]
+
+  book_authors book_author[]
 }
 
 model book_author {
-  book_id Int 
-  author_id Int 
+  id_book_author Int @id @default(autoincrement())
+
+  book_id Int
+  author_id Int
 
   book Book @relation(fields: [book_id], references: [id_book])
   author Author @relation(fields: [author_id], references: [id_author])
-  @@id([book_id, author_id], name: "book_author")
+
+  @@unique([book_id, author_id]) 
 }
+
 model Author {
   id_author Int @default(autoincrement()) @id
   author_name String
   author_lastname String
 
-  books book_author[]
+  book_authors book_author[]
 }
 
 model Publisher {
