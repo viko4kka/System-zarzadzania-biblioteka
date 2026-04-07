@@ -47,15 +47,6 @@ CREATE TABLE "Book" (
 );
 
 -- CreateTable
-CREATE TABLE "book_author" (
-    "id_book_author" SERIAL NOT NULL,
-    "book_id" INTEGER NOT NULL,
-    "author_id" INTEGER NOT NULL,
-
-    CONSTRAINT "book_author_pkey" PRIMARY KEY ("id_book_author")
-);
-
--- CreateTable
 CREATE TABLE "Author" (
     "id_author" SERIAL NOT NULL,
     "author_name" TEXT NOT NULL,
@@ -72,11 +63,19 @@ CREATE TABLE "Publisher" (
     CONSTRAINT "Publisher_pkey" PRIMARY KEY ("id_publisher")
 );
 
+-- CreateTable
+CREATE TABLE "_AuthorToBook" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL,
+
+    CONSTRAINT "_AuthorToBook_AB_pkey" PRIMARY KEY ("A","B")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_mail_key" ON "User"("mail");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "book_author_book_id_author_id_key" ON "book_author"("book_id", "author_id");
+CREATE INDEX "_AuthorToBook_B_index" ON "_AuthorToBook"("B");
 
 -- AddForeignKey
 ALTER TABLE "Loan" ADD CONSTRAINT "Loan_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -91,7 +90,7 @@ ALTER TABLE "Copy" ADD CONSTRAINT "Copy_book_id_fkey" FOREIGN KEY ("book_id") RE
 ALTER TABLE "Book" ADD CONSTRAINT "Book_publisher_id_fkey" FOREIGN KEY ("publisher_id") REFERENCES "Publisher"("id_publisher") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "book_author" ADD CONSTRAINT "book_author_book_id_fkey" FOREIGN KEY ("book_id") REFERENCES "Book"("id_book") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "_AuthorToBook" ADD CONSTRAINT "_AuthorToBook_A_fkey" FOREIGN KEY ("A") REFERENCES "Author"("id_author") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "book_author" ADD CONSTRAINT "book_author_author_id_fkey" FOREIGN KEY ("author_id") REFERENCES "Author"("id_author") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "_AuthorToBook" ADD CONSTRAINT "_AuthorToBook_B_fkey" FOREIGN KEY ("B") REFERENCES "Book"("id_book") ON DELETE CASCADE ON UPDATE CASCADE;
