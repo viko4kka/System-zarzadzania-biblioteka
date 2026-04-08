@@ -1,0 +1,9 @@
+node_modules
+
+
+browsing_history
+.env
+
+.git
+.gitignore
+Dockerfile
