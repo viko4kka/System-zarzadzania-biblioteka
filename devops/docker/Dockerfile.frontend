@@ -1,0 +1,20 @@
+# Node wersja 22
+FROM node:22
+
+# Katalog roboczy
+WORKDIR /app
+
+# Kopiowanie package.json i package-lock.json
+COPY frontend/package*.json ./
+
+# Instalacja zależności
+RUN npm ci
+
+# Kopiowanie aplikacji do kontenera
+COPY frontend/ ./
+
+# Ustawianie portu dla Vite
+EXPOSE 3000
+
+# Uruchomienie aplikacji
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
