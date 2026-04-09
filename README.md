@@ -4,7 +4,7 @@
 Aplikacja webowa do zarządzania katalogiem książek i wypożyczeniami.
 
 ## Stack techniczny
-- **Frontend:** Next.js + TypeScript + Tailwind
+- **Frontend:** React + TypeScript + Tailwind
 - **Backend:** Node.js + Express + TypeScript + Prisma
 - **Baza danych:** PostgreSQL
 - **Konteneryzacja:** Docker Compose
