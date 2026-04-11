@@ -1,0 +1,9 @@
+Stworzenie kontenera dla backendu
+
+- Stworzono plik ./devops/docker/Dockerfile.backend na podstawie pliku Dockerfile.frontend
+- Najpierw instalowane są zależności dla backendu, następnie kopiowane są pliki projektu
+- Po skopiowaniu następuje konfiguracja Prismy
+- Backend działa na porcie 4000
+- Potwierdzenie:
+  - localhost:4000/api/health zwraca status ok
+  - localhost:4000/api/docs zwraca stronę Swaggera
