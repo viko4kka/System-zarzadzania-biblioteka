@@ -1,0 +1,24 @@
+# Node wersja 22
+FROM node:22
+
+# Katalog roboczy
+WORKDIR /app
+
+# Kopiowanie package.json i package-lock.json
+COPY backend/package*.json ./
+
+# Instalacja zależności
+RUN npm install
+# Kopiowanie aplikacji do kontenera
+COPY backend/ ./
+
+# Prisma
+RUN npx prisma generate
+# TODO: odkomentować gdy będzie istniała baza danych
+# RUN npx prisma migrate dev
+
+# Ustawianie portu
+EXPOSE 4000
+
+# Uruchomienie aplikacji
+CMD ["npm", "run", "start"]
