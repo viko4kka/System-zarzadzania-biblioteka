@@ -5,7 +5,6 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "lastname" TEXT NOT NULL,
-    "joindate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "is_Admin" BOOLEAN NOT NULL DEFAULT false,
     "is_Banned" BOOLEAN NOT NULL DEFAULT false,
     "is_Removed" BOOLEAN NOT NULL DEFAULT false,
@@ -28,7 +27,6 @@ CREATE TABLE "Loan" (
 CREATE TABLE "Copy" (
     "id_copy" SERIAL NOT NULL,
     "book_id" INTEGER NOT NULL,
-    "is_loan" BOOLEAN NOT NULL DEFAULT false,
     "is_actual" BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT "Copy_pkey" PRIMARY KEY ("id_copy")
@@ -39,8 +37,8 @@ CREATE TABLE "Book" (
     "id_book" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "year" INTEGER NOT NULL,
-    "cover" TEXT NOT NULL,
-    "ISBN" TEXT NOT NULL,
+    "cover" TEXT,
+    "ISBN" TEXT,
     "publisher_id" INTEGER NOT NULL,
 
     CONSTRAINT "Book_pkey" PRIMARY KEY ("id_book")

@@ -19,7 +19,6 @@ model User {
   password String
   name String
   lastname String
-  joindate DateTime @default(now())
   is_Admin Boolean @default(false)
   is_Banned Boolean @default(false)
   is_Removed Boolean @default(false)
@@ -41,7 +40,6 @@ model Loan {
 model Copy {
   id_copy Int @default(autoincrement()) @id
   book_id Int 
-  is_loan Boolean @default(false)
   is_actual Boolean @default(true)
 
   book Book @relation(fields: [book_id], references: [id_book])
@@ -52,8 +50,8 @@ model Book {
   id_book Int @default(autoincrement()) @id
   title String
   year Int
-  cover String
-  ISBN String
+  cover String?
+  ISBN String?
   publisher_id Int
 
   publisher Publisher @relation(fields: [publisher_id], references: [id_publisher])
