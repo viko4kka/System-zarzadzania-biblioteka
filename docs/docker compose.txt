@@ -1,0 +1,14 @@
+Stworzenie skryptu uruchomieniowego dla polecenia docker compose
+
+- Stworzono plik "docker-compose.development.yml"
+- Zdefiniowano kontenery dla frontendu i backendu
+
+Uruchomienie
+- docker compose -f docker-compose.development.yml up --build
+
+Weryfikacja
+- localhost:3000 działa (pojawia się pusta strona aplikacji frontendu
+- localhost:4000 działa (przetestowano poprzez "localhost:4000/api/docs")
+
+TODO:
+- Zdefiniować kontener dla bazy danych
