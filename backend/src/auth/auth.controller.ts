@@ -101,7 +101,7 @@ export class AuthController {
     status: 200,
     description: 'Użytkownik zalogowany pomyślnie',
     schema: {
-      example: { id: 1, name: 'Jan' }
+      example: { id: 1, name: 'Jan', is_Admin: 'False', is_Banned: 'False' }
     }
   })
   @ApiResponse({
@@ -127,7 +127,7 @@ export class AuthController {
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { id, name, token } = await this.authService.login(dto);
+    const { id, name, token, is_Admin, is_Banned } = await this.authService.login(dto);
 
     res.cookie('access_token', token, {
       httpOnly: true,
@@ -137,7 +137,7 @@ export class AuthController {
       path: '/',
     });
 
-    return { id, name };
+    return { id, name, is_Admin, is_Banned };
   }
 
 

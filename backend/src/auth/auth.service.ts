@@ -6,20 +6,27 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
 const SALT_ROUNDS = 12;
-const JWT_SECRET = process.env.JWT_SECRET ?? 'change_me_in_env';
+const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = '7d';
 
-export interface AuthResult {
+export interface RegisterResult {
   id: number;
   name: string;
   token: string;
+}
+export interface LoginResult {
+  id: number;
+  name: string;
+  token: string;
+  is_Admin: boolean;
+  is_Banned: boolean;
 }
 
 @Injectable()
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async register(dto: RegisterDto): Promise<AuthResult> {
+  async register(dto: RegisterDto): Promise<RegisterResult> {
     // Sprawdź czy email jest już zajęty
     const existing = await this.prisma.user.findUnique({
       where: { mail: dto.mail },
@@ -50,6 +57,9 @@ export class AuthService {
       throw new InternalServerErrorException('Nie udało się utworzyć konta');
     });
 
+    if (!JWT_SECRET) {
+      throw new Error('JWT_SECRET is not defined in environment variables');
+    }
     // Wygeneruj JWT
     const token = jwt.sign(
       { sub: user.id, name: user.name },
@@ -60,7 +70,7 @@ export class AuthService {
     return { id: user.id, name: user.name, token };
   }
 
-  async login(dto: LoginDto): Promise<AuthResult> {
+  async login(dto: LoginDto): Promise<LoginResult> {
     // Znajdź użytkownika po emailu
     const user = await this.prisma.user.findUnique({
       where: { mail: dto.mail },
@@ -68,6 +78,8 @@ export class AuthService {
         id: true,
         name: true,
         password: true,
+        is_Admin: true,
+        is_Banned: true,
       },
     }).catch(() => {
       throw new InternalServerErrorException('Błąd bazy danych');
@@ -84,6 +96,9 @@ export class AuthService {
       throw new UnauthorizedException('Nieprawidłowy email lub hasło');
     }
 
+    if (!JWT_SECRET) {
+      throw new Error('JWT_SECRET is not defined in environment variables');
+    }
     // Wygeneruj token
     const token = jwt.sign(
       { sub: user.id, name: user.name },
@@ -91,7 +106,7 @@ export class AuthService {
       { expiresIn: JWT_EXPIRES_IN },
     );
 
-    return { id: user.id, name: user.name, token };
+    return { id: user.id, name: user.name, token, is_Admin: user.is_Admin, is_Banned: user.is_Banned };
   }
 
 }
