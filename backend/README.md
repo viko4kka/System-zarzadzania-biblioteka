@@ -16,6 +16,8 @@ npm install
 npx prisma generate
 # Wyczyszczenie bazy danych
 npx prisma migrate reset 
+# Załadowanie seeda
+npx prisma db seed
 ```
 
 ## Uruchamianie
