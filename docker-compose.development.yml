@@ -3,7 +3,7 @@ services:
     image: postgres:18
     restart: always
     ports:
-      - "5435:5432"
+      - "5432:5432"
     environment:
       POSTGRES_DB: library
       POSTGRES_USER: postgres
@@ -18,7 +18,7 @@ services:
       NODE_ENV: development
       PORT: "4000"
       JWT_SECRET: "dev-secret-change-me-pls"
-      DATABASE_URL: postgresql://postgres:postgres@db:5435/library
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/library
     build:
       context: .
       dockerfile: ./devops/docker/Dockerfile.backend

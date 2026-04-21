@@ -10,5 +10,10 @@ Weryfikacja
 - localhost:3000 działa (pojawia się pusta strona aplikacji frontendu
 - localhost:4000 działa (przetestowano poprzez "localhost:4000/api/docs")
 
-TODO:
-- Zdefiniować kontener dla bazy danych
+UPDATE: 21.04.2026
+- Zdefiniowano kontener dla bazy danych
+  - Działa na porcie 5432
+
+Weryfikacja
+- curl -X POST -H "Content-Type: application/json" -d "{\"mail\":\"asdfasdf\", \"password\":\"zxcvzxcv\", \"name\":\"qwerqwer\", \"lastname\":\"tyuityui\"}" localhost:4000/api/users
+  - Powyższa komenda udowodniła, że połączenie z bazą danych zostało ustanowione
