@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 
-export const CIRCLES = 25;
+export const CIRCLES = 50;
 
 const initPosition = Array.from({ length: CIRCLES }, () => ({
   x: Math.random() * 300,

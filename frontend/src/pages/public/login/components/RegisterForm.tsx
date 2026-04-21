@@ -25,13 +25,13 @@ export default function RegisterForm({ onSwitch }: RegisterFormProps) {
   const onSubmit: SubmitHandler<RegisterFormType> = (data) => console.log(data);
 
   return (
-    <div className="my-4 w-full">
+    <div className="my-4 flex w-full flex-col items-center justify-center">
       <h1 className="500:text-2xl text-main-navy-blue 800:col-span-2 px-8 text-xl">
         Join our library!
       </h1>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="500:mt-6 500:px-10 800:px-6 800:gap-y-1 my-4 flex w-full flex-col gap-y-3 px-6"
+        className="500:mt-6 500:px-10 800:px-6 800:gap-y-1 my-4 flex w-full flex-col gap-y-1 px-6"
       >
         <div className="flex flex-col gap-y-1">
           <div
@@ -183,7 +183,7 @@ export default function RegisterForm({ onSwitch }: RegisterFormProps) {
 
         <Button
           type="submit"
-          className="mx-auto mt-3 w-fit tracking-wide"
+          className="800:mt-5 mx-auto mt-3 w-fit tracking-wide"
           intent="login"
           size="medium"
         >
@@ -191,7 +191,7 @@ export default function RegisterForm({ onSwitch }: RegisterFormProps) {
         </Button>
       </form>
 
-      <div className="800:flex 800:flex-row 800:items-center 800:justify-center 800:gap-x-1.5">
+      <div className="800:flex 800:flex-row 800:items-center 800:justify-center 800:gap-x-1.5 flex flex-col items-center justify-center">
         <p className="text-main-navy-blue 500:text-base text-sm">
           Already have an account?
         </p>
