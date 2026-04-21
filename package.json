@@ -1,0 +1,14 @@
+{
+  "name": "biblioteka-informatyka",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:up": "docker compose -f docker-compose.development.yml up --build -d",
+    "dev:down": "docker compose -f docker-compose.development.yml down",
+    "dev:logs": "docker compose -f docker-compose.development.yml logs -f",
+    "lint": "npm run lint --prefix frontend && npm run lint --prefix backend",
+    "typecheck": "npm run typecheck --prefix backend",
+    "test": "npm run test --prefix backend",
+    "build": "npm run build --prefix frontend && npm run build --prefix backend"
+  }
+}
