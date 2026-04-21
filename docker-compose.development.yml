@@ -1,9 +1,24 @@
 services:
+  db:
+    image: postgres:18
+    restart: always
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_DB: library
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql
+
   backend:
+    depends_on:
+      - db
     environment:
       NODE_ENV: development
       PORT: "4000"
       JWT_SECRET: "dev-secret-change-me-pls"
+      DATABASE_URL: postgresql://postgres:postgres@db:5435/library
     build:
       context: .
       dockerfile: ./devops/docker/Dockerfile.backend
@@ -34,3 +49,6 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
+
+volumes:
+  pgdata:
