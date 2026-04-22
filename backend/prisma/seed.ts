@@ -10,7 +10,7 @@ const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
-// Add to hash password
+// Variables to hash password
 const bcrypt = require('bcrypt');
 const SALT_ROUNDS = 12;
 
@@ -145,12 +145,9 @@ async function main() {
 
     await prisma.book.update({
         where: {id_book: book_list[3]},
-        data: {authors: {connect: [{id_author: author_list[3]}]}},
-    });
-
-    await prisma.book.update({
-        where: {id_book: book_list[3]},
-        data: {authors: {connect: [{id_author: author_list[4]}]}},
+        data: {authors: {connect: [{id_author: author_list[3]},
+                                   {id_author: author_list[4]},
+            ]}},
     });
     
     await prisma.book.update({
@@ -175,22 +172,13 @@ async function main() {
 
     await prisma.book.update({
         where: {id_book: book_list[8]},
-        data: {authors: {connect: [{id_author: author_list[9]}]}},
+        data: {authors: {connect: [{id_author: author_list[9]},
+                                   {id_author: author_list[10]},
+                                   {id_author: author_list[11]},
+                                   {id_author: author_list[12]},
+                                ]}},
     });
 
-    await prisma.book.update({
-        where: {id_book: book_list[8]},
-        data: {authors: {connect: [{id_author: author_list[10]}]}},
-    });
-
-    await prisma.book.update({
-        where: {id_book: book_list[8]},
-        data: {authors: {connect: [{id_author: author_list[11]}]}},
-    });
-    await prisma.book.update({
-        where: {id_book: book_list[8]},
-        data: {authors: {connect: [{id_author: author_list[12]}]}},
-    });
     await prisma.book.update({
         where: {id_book: book_list[9]},
         data: {authors: {connect: [{id_author: author_list[13]}]}},

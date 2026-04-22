@@ -50,4 +50,6 @@ Aby zaszła modyfikacja bazy danych należy wygenerować modele TypeScript oraz 
 npx prisma generate
 # Utworzenie nowej migracji
 npx prisma migrate dev
+# Załadowanie seeda
+npx prisma db seed
 ```
