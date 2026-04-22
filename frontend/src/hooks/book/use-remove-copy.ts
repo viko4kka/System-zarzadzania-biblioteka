@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
-import type { RemoveCopyDto } from "../../api/other/other.types";
-import { otherApi } from "../../api/other/other.api";
+import { bookApi } from "../../api/book/book.api";
+import type { RemoveCopyDto } from "../../api/book/book.types";
 
 export const useRemoveCopy = () => {
     return useMutation({
-        mutationFn: (data: RemoveCopyDto) => otherApi.copyRemove(data),
+        mutationFn: (data: RemoveCopyDto) => bookApi.copyRemove(data),
 
         onSuccess: (message) => {
             console.log(message);

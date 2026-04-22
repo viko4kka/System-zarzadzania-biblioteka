@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
-import type { AddAuthorDto } from "../../api/other/other.types";
-import { otherApi } from "../../api/other/other.api";
+import { bookApi } from "../../api/book/book.api";
+import type { AddCopyDto } from "../../api/book/book.types";
 
-export const useAddAuthor = () => {
+export const useAddCopy = () => {
     return useMutation({
-        mutationFn: (data: AddAuthorDto) => otherApi.addAuthor(data),
+        mutationFn: (data: AddCopyDto) => bookApi.copyAdd(data),
 
         onSuccess: (message) => {
             console.log(message);
