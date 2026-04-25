@@ -31,7 +31,7 @@ export interface LoginResult {
 export interface JwtPayload {
   id: number;
   name: string;
-  is_Admin: string;
+  is_Admin: boolean;
 }
 
 @Injectable()

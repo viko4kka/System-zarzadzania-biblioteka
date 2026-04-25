@@ -38,7 +38,7 @@ export class UserController {
   })
   async getUserById(@Param('id') id: string, @Req() req: Request) {
     const payload = this.authService.verifyToken(req);
-    if (payload.is_Admin || payload.id == parseInt(id)) {
+    if (payload.is_Admin == true || payload.id == parseInt(id)) {
       return this.userService.getUser(parseInt(id));
     }
     throw new UnauthorizedException(
