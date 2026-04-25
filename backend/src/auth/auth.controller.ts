@@ -1,6 +1,12 @@
 import {
-  Controller, Post, Body, Res, HttpCode, HttpStatus,
-  UsePipes, ValidationPipe,
+  Controller,
+  Post,
+  Body,
+  Res,
+  HttpCode,
+  HttpStatus,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import type { Response } from 'express';
@@ -18,10 +24,10 @@ export class AuthController {
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Rejestracja nowego użytkownika',
-    description: 'Tworzy nowe konto użytkownika, generuje JWT token i ustawia go w HttpOnly cookie'
+    description:
+      'Tworzy nowe konto użytkownika, generuje JWT token i ustawia go w HttpOnly cookie',
   })
   @ApiBody({ type: RegisterDto })
   @ApiResponse({
@@ -30,9 +36,9 @@ export class AuthController {
     schema: {
       example: {
         id: 1,
-        name: 'Jan'
-      }
-    }
+        name: 'Jan',
+      },
+    },
   })
   @ApiResponse({
     status: 400,
@@ -42,11 +48,11 @@ export class AuthController {
         statusCode: 400,
         message: [
           'Nieprawidłowy format adresu email',
-          'Hasło musi mieć co najmniej 8 znaków'
+          'Hasło musi mieć co najmniej 8 znaków',
         ],
-        error: 'Bad Request'
-      }
-    }
+        error: 'Bad Request',
+      },
+    },
   })
   @ApiResponse({
     status: 409,
@@ -55,9 +61,9 @@ export class AuthController {
       example: {
         statusCode: 409,
         message: 'Użytkownik z tym adresem email już istnieje',
-        error: 'Conflict'
-      }
-    }
+        error: 'Conflict',
+      },
+    },
   })
   @ApiResponse({
     status: 500,
@@ -66,11 +72,10 @@ export class AuthController {
       example: {
         statusCode: 500,
         message: 'Nie udało się utworzyć konta',
-        error: 'Internal Server Error'
-      }
-    }
+        error: 'Internal Server Error',
+      },
+    },
   })
-
   async register(
     @Body() dto: RegisterDto,
     @Res({ passthrough: true }) res: Response,
@@ -79,9 +84,9 @@ export class AuthController {
 
     // Ustaw token w HttpOnly cookie
     res.cookie('access_token', token, {
-      httpOnly: true,       // JS po stronie klienta nie ma dostępu — ochrona przed XSS
-      secure: IS_PROD,      // Tylko HTTPS na produkcji
-      sameSite: 'lax',      // Ochrona przed CSRF
+      httpOnly: true, // JS po stronie klienta nie ma dostępu — ochrona przed XSS
+      secure: IS_PROD, // Tylko HTTPS na produkcji
+      sameSite: 'lax', // Ochrona przed CSRF
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dni w ms
       path: '/',
     });
@@ -94,15 +99,16 @@ export class AuthController {
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   @ApiOperation({
     summary: 'Logowanie użytkownika',
-    description: 'Weryfikuje dane logowania, generuje JWT token i ustawia go w HttpOnly cookie'
+    description:
+      'Weryfikuje dane logowania, generuje JWT token i ustawia go w HttpOnly cookie',
   })
   @ApiBody({ type: LoginDto })
   @ApiResponse({
     status: 200,
     description: 'Użytkownik zalogowany pomyślnie',
     schema: {
-      example: { id: 1, name: 'Jan', is_Admin: 'False', is_Banned: 'False' }
-    }
+      example: { id: 1, name: 'Jan', is_Admin: 'False', is_Banned: 'False' },
+    },
   })
   @ApiResponse({
     status: 400,
@@ -115,9 +121,9 @@ export class AuthController {
       example: {
         statusCode: 401,
         message: 'Nieprawidłowy email lub hasło',
-        error: 'Unauthorized'
-      }
-    }
+        error: 'Unauthorized',
+      },
+    },
   })
   @ApiResponse({
     status: 500,
@@ -127,7 +133,8 @@ export class AuthController {
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { id, name, token, is_Admin, is_Banned } = await this.authService.login(dto);
+    const { id, name, token, is_Admin, is_Banned } =
+      await this.authService.login(dto);
 
     res.cookie('access_token', token, {
       httpOnly: true,
@@ -139,8 +146,4 @@ export class AuthController {
 
     return { id, name, is_Admin, is_Banned };
   }
-
-
-
-
 }
