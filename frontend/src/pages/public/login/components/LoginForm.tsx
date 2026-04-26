@@ -3,6 +3,8 @@ import { SlLock } from "react-icons/sl";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { Button } from "../../../../ui/Button";
 
+import { motion } from "motion/react";
+
 type LoginFormType = {
   email: string;
   password: string;
@@ -22,7 +24,12 @@ export default function LoginForm({ onSwitch }: LoginFormProps) {
   const onSubmit: SubmitHandler<LoginFormType> = (data) => console.log(data);
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+      className="flex h-full w-full flex-col items-center justify-center"
+    >
       <h1 className="500:text-2xl text-main-navy-blue 800:col-span-2 mb-6 px-8 text-center text-xl">
         Welcome back in our library!
       </h1>
@@ -110,6 +117,6 @@ export default function LoginForm({ onSwitch }: LoginFormProps) {
           Sign up!
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }

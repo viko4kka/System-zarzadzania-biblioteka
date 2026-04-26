@@ -3,6 +3,8 @@ import { SlLock } from "react-icons/sl";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { Button } from "../../../../ui/Button";
 
+import { motion } from "motion/react";
+
 type RegisterFormType = {
   firstName: string;
   lastName: string;
@@ -25,7 +27,12 @@ export default function RegisterForm({ onSwitch }: RegisterFormProps) {
   const onSubmit: SubmitHandler<RegisterFormType> = (data) => console.log(data);
 
   return (
-    <div className="my-4 flex w-full flex-col items-center justify-center">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+      className="my-4 flex w-full flex-col items-center justify-center"
+    >
       <h1 className="500:text-2xl text-main-navy-blue 800:col-span-2 px-8 text-xl">
         Join our library!
       </h1>
@@ -202,6 +209,6 @@ export default function RegisterForm({ onSwitch }: RegisterFormProps) {
           Log in!
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }

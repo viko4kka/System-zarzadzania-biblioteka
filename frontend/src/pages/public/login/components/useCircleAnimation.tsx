@@ -29,8 +29,7 @@ function useCircleAnimation(index: number) {
 }
 
 function FloatingCircle({ index }: { index: number }) {
-  const { isDragging, setIsDragging, circlesPosition } =
-    useCircleAnimation(index);
+  const { setIsDragging, circlesPosition } = useCircleAnimation(index);
 
   return (
     <motion.div
