@@ -16,6 +16,12 @@ docs/
 .env.*.local
 .env.production
 .env.staging
+.env.development
+.env.test
+*.env
+.prisma
+
+package-lock.backup.json
 
 *.tsbuildinfo
 .eslintcache
