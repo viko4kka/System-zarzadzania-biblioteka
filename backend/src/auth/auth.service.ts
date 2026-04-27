@@ -61,11 +61,15 @@ export class AuthService {
     if (!JWT_SECRET) {
       throw new Error('JWT_SECRET musi być zdefiniowany w .env');
     }
-    const payload = jwt.verify(token, JWT_SECRET) as JwtPayload;
-    if (!payload) {
+    try {
+      const payload = jwt.verify(token, JWT_SECRET) as JwtPayload;
+      if (!payload) {
+        throw new UnauthorizedException('Błędny Token');
+      }
+      return payload;
+    } catch {
       throw new UnauthorizedException('Błędny Token');
     }
-    return payload;
   }
 
   async register(dto: RegisterDto): Promise<RegisterResult> {
