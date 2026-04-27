@@ -63,4 +63,4 @@ Używamy Conventional Commits:
 ## Zespół
 - **Frontend:** 4 osoby
 - **Backend:** 5 osoby
-- **DevOps:** 3 osoby
+- **DevOps:** 2 osoby
