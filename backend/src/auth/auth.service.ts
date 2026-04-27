@@ -9,6 +9,7 @@ import * as jwt from 'jsonwebtoken';
 import { PrismaService } from '../prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { Request } from 'express';
 
 const SALT_ROUNDS = 12;
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -27,9 +28,45 @@ export interface LoginResult {
   is_Banned: boolean;
 }
 
+export interface JwtPayload {
+  id: number;
+  name: string;
+  is_Admin: boolean;
+}
+
 @Injectable()
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
+
+  signToken(user: { id: number; name: string; is_Admin: boolean }) {
+    if (!JWT_SECRET) {
+      throw new Error('JWT_SECRET musi być zdefiniowany w .env');
+    }
+    // Wygeneruj JWT
+    const token = jwt.sign(
+      { id: user.id, name: user.name, is_Admin: user.is_Admin },
+      JWT_SECRET,
+      {
+        expiresIn: JWT_EXPIRES_IN,
+      },
+    );
+    return token;
+  }
+
+  verifyToken(req: Request) {
+    const token = req.cookies?.access_token as string;
+    if (!token) {
+      throw new UnauthorizedException('Użytkownik niezalogowany');
+    }
+    if (!JWT_SECRET) {
+      throw new Error('JWT_SECRET musi być zdefiniowany w .env');
+    }
+    const payload = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    if (!payload) {
+      throw new UnauthorizedException('Błędny Token');
+    }
+    return payload;
+  }
 
   async register(dto: RegisterDto): Promise<RegisterResult> {
     // Sprawdź czy email jest już zajęty
@@ -62,6 +99,7 @@ export class AuthService {
         select: {
           id: true,
           name: true,
+          is_Admin: true,
         },
       })
       .catch(() => {
@@ -72,9 +110,7 @@ export class AuthService {
       throw new Error('JWT_SECRET is not defined in environment variables');
     }
     // Wygeneruj JWT
-    const token = jwt.sign({ sub: user.id, name: user.name }, JWT_SECRET, {
-      expiresIn: JWT_EXPIRES_IN,
-    });
+    const token = this.signToken(user);
 
     return { id: user.id, name: user.name, token };
   }
@@ -111,9 +147,7 @@ export class AuthService {
       throw new Error('JWT_SECRET is not defined in environment variables');
     }
     // Wygeneruj token
-    const token = jwt.sign({ sub: user.id, name: user.name }, JWT_SECRET, {
-      expiresIn: JWT_EXPIRES_IN,
-    });
+    const token = this.signToken(user);
 
     return {
       id: user.id,
