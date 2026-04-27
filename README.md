@@ -1,51 +1,83 @@
 # System zarządzania biblioteką
+
 > Biblioteka Informatyka
 
 Aplikacja webowa do zarządzania katalogiem książek i wypożyczeniami.
 
-## Stack techniczny
-- **Frontend:** Next.js + TypeScript + Tailwind
-- **Backend:** Node.js + Express + TypeScript + Prisma
-- **Baza danych:** PostgreSQL
-- **Konteneryzacja:** Docker Compose
+## Technologie
 
-## Wymagania
-- Node.js 20+
-- Docker Desktop
-- npm
+React + Vite + TypeScript + TailwindCSS  
+NestJS + Prisma + Swagger + PostgreSQL + JWT  
+Docker + Docker Compose
 
-## Uruchomienie lokalne (Docker)
+## Instalacja
+
+Przed uruchomieniem należy włączyć Docker Desktop.
+
 ```bash
-cp .env.example .env
-docker compose up --build
+npm run dev:up
+npm run dev:down
+npm run dev:logs
 ```
 
-Aplikacja dostępna pod:
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:4000/api
-- Swagger: http://localhost:4000/api/docs
+Komenda `npm run dev:up` uruchamia frontend, backend oraz bazę danych PostgreSQL przy użyciu pliku `docker-compose.development.yml`.
 
-## Uruchomienie bez Dockera
-```bash
-# Backend
-cd backend
-npm install
-npm run dev
+`npm run dev:down` zatrzymuje i usuwa kontenery uruchomione w trybie developerskim., a `npm run dev:logs` wyświetla logi uruchomionych usług.
 
-# Frontend
-cd frontend
-npm install
-npm run dev
+## Uruchamianie
+
+Frontend:
+
+```text
+http://localhost:3000
 ```
 
-## Zmienne środowiskowe
-Skopiuj `.env.example` i uzupełnij wartości:
+Backend:
 
-| Zmienna | Opis | Przykład |
-|---------|------|---------|
-| DATABASE_URL | URL do bazy PostgreSQL | postgresql://user:pass@localhost:5432/db |
-| JWT_SECRET | Sekret do podpisywania tokenów | supersecretkey |
-| PORT | Port backendu | 3001 |
+```text
+http://localhost:4000
+```
+
+Swagger:
+
+```text
+http://localhost:4000/api/docs
+```
+
+Healthcheck:
+
+```text
+http://localhost:4000/api/health
+```
+
+## Baza danych
+
+Model bazy danych definiuje plik:
+
+```text
+backend/prisma/schema.prisma
+```
+
+Migracja developerska:
+
+```bash
+docker compose -f docker-compose.development.yml exec backend npx prisma migrate dev
+```
+
+lub z poziomu root scripts:
+
+```bash
+npm run migrate:dev
+```
+
+## Dodatkowe skrypty
+
+```bash
+npm run lint
+npm run typecheck
+npm run test
+npm run build
+```
 
 ## Zasady branchowania
 - `main` — produkcja, tylko przez PR
@@ -62,5 +94,5 @@ Używamy Conventional Commits:
 
 ## Zespół
 - **Frontend:** 4 osoby
-- **Backend:** 5 osoby
+- **Backend:** 5 osób
 - **DevOps:** 2 osoby
