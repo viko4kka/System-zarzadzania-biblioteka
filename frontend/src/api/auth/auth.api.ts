@@ -8,9 +8,9 @@ import type {
     ApiRegisterResponseDto,
     ApiRemoveUserResponseDto,
 } from "./auth.types";
-import { mapLoginResponse, mapRegisterResponse } from "./auth.mapper";
+import { mapLoginResponse,   mapRegisterResponse } from "./auth.mapper";
 
-const baseURL = "/auth";
+const baseURL = "/api/auth";
 
 export const authApi = {
     login: async (data: LoginDto): Promise<{ user: User; message: string }> => {

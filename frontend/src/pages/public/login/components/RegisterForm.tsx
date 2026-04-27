@@ -1,17 +1,11 @@
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { GoMail, GoPencil } from "react-icons/go";
 import { SlLock } from "react-icons/sl";
-import { useForm, type SubmitHandler } from "react-hook-form";
 import { Button } from "../../../../ui/Button";
 
 import { motion } from "motion/react";
-
-type RegisterFormType = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
+import type { RegisterDto } from "../../../../api/auth/auth.types";
+import { useRegister } from "../../../../hooks/auth/useRegister";
 
 interface RegisterFormProps {
   onSwitch: () => void;
@@ -21,10 +15,20 @@ export default function RegisterForm({ onSwitch }: RegisterFormProps) {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
-  } = useForm<RegisterFormType>();
+  } = useForm<RegisterDto>();
 
-  const onSubmit: SubmitHandler<RegisterFormType> = (data) => console.log(data);
+  const { isPending, mutate: registerUser } = useRegister();
+
+  const onSubmit: SubmitHandler<RegisterDto> = (data) => {
+    registerUser(data, {
+      onSuccess: () => {
+        reset();
+        onSwitch();
+      },
+    });
+  };
 
   return (
     <motion.div
@@ -43,14 +47,14 @@ export default function RegisterForm({ onSwitch }: RegisterFormProps) {
         <div className="flex flex-col gap-y-1">
           <div
             className={`group flex items-center gap-x-1.5 rounded-xl border p-2 transition-all duration-300 ${
-              errors.firstName
+              errors.name
                 ? "border-error"
                 : "border-border-light focus-within:border-main-blue"
             }`}
           >
             <span
               className={`500:text-sm text-xs transition-colors duration-300 ${
-                errors.firstName
+                errors.name
                   ? "text-error"
                   : "text-text-form group-focus-within:text-main-blue"
               }`}
@@ -58,28 +62,28 @@ export default function RegisterForm({ onSwitch }: RegisterFormProps) {
               <GoPencil />
             </span>
             <input
-              {...register("firstName", { required: true })}
+              {...register("name", { required: true })}
               type="text"
               className="text-text-form 500:text-sm w-full bg-transparent text-xs outline-none"
               placeholder="Enter name"
             />
           </div>
           <span className="text-error min-h-4 pl-1 text-left text-[9px]">
-            {errors.firstName ? "First name is required" : ""}
+            {errors.name ? "First name is required" : ""}
           </span>
         </div>
 
         <div className="flex flex-col gap-y-1">
           <div
             className={`group flex items-center gap-x-1.5 rounded-xl border p-2 transition-all duration-300 ${
-              errors.lastName
+              errors.lastname
                 ? "border-error"
                 : "border-border-light focus-within:border-main-blue"
             }`}
           >
             <span
               className={`500:text-sm text-xs transition-colors duration-300 ${
-                errors.lastName
+                errors.lastname
                   ? "text-error"
                   : "text-text-form group-focus-within:text-main-blue"
               }`}
@@ -87,28 +91,28 @@ export default function RegisterForm({ onSwitch }: RegisterFormProps) {
               <GoPencil />
             </span>
             <input
-              {...register("lastName", { required: true })}
+              {...register("lastname", { required: true })}
               type="text"
               className="text-text-form 500:text-sm w-full bg-transparent text-xs outline-none"
               placeholder="Enter surname"
             />
           </div>
           <span className="text-error min-h-4 pl-1 text-left text-[9px]">
-            {errors.lastName ? "Last name is required" : ""}
+            {errors.lastname ? "Last name is required" : ""}
           </span>
         </div>
 
         <div className="flex flex-col gap-y-1">
           <div
             className={`group flex items-center gap-x-1.5 rounded-xl border p-2 transition-all duration-300 ${
-              errors.email
+              errors.mail
                 ? "border-error"
                 : "border-border-light focus-within:border-main-blue"
             }`}
           >
             <span
               className={`500:text-sm text-xs transition-colors duration-300 ${
-                errors.email
+                errors.mail
                   ? "text-error"
                   : "text-text-form group-focus-within:text-main-blue"
               }`}
@@ -116,15 +120,15 @@ export default function RegisterForm({ onSwitch }: RegisterFormProps) {
               <GoMail />
             </span>
             <input
-              {...register("email", { required: true })}
+              {...register("mail", { required: true })}
               type="text"
-              name="email"
+              // name="email"
               className="text-text-form 500:text-sm w-full bg-transparent text-xs outline-none"
               placeholder="Enter email"
             />
           </div>
           <span className="text-error min-h-4 pl-1 text-left text-[9px]">
-            {errors.email ? "Email is required" : ""}
+            {errors.mail ? "Email is required" : ""}
           </span>
         </div>
 
@@ -147,7 +151,7 @@ export default function RegisterForm({ onSwitch }: RegisterFormProps) {
             </span>
             <input
               {...register("password", { required: true })}
-              type="text"
+              type="password"
               name="password"
               className="text-text-form 500:text-sm w-full bg-transparent text-xs outline-none"
               placeholder="Enter password"
@@ -157,7 +161,7 @@ export default function RegisterForm({ onSwitch }: RegisterFormProps) {
             {errors.password ? "Password is required" : ""}
           </span>
         </div>
-
+        {/* 
         <div className="flex flex-col gap-y-1">
           <div
             className={`group flex items-center gap-x-1.5 rounded-xl border p-2 transition-all duration-300 ${
@@ -186,15 +190,16 @@ export default function RegisterForm({ onSwitch }: RegisterFormProps) {
           <span className="text-error min-h-4 pl-1 text-left text-[9px]">
             {errors.confirmPassword ? " Confirm password is required" : ""}
           </span>
-        </div>
+        </div> */}
 
         <Button
           type="submit"
           className="800:mt-5 mx-auto mt-3 w-fit tracking-wide"
           intent="login"
           size="medium"
+          disabled={isPending}
         >
-          Register
+          {isPending ? "Loading" : "Register"}
         </Button>
       </form>
 
