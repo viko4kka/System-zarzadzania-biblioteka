@@ -8,9 +8,9 @@ import type {
     ApiRegisterResponseDto,
     ApiRemoveUserResponseDto,
 } from "./auth.types";
-import { mapLoginResponse, mapRegisterResponse } from "./auth.mapper";
+import { mapLoginResponse,   mapRegisterResponse } from "./auth.mapper";
 
-const baseURL = "/auth";
+const baseURL = "/api/auth";
 
 export const authApi = {
     login: async (data: LoginDto): Promise<{ user: User; message: string }> => {
@@ -22,6 +22,8 @@ export const authApi = {
         const response = await api.post<ApiRegisterResponseDto>(`${baseURL}/register`, data);
         return mapRegisterResponse(response);
     },
+    
+    //TODO: endpoint for logout
 
     removeUser: async (id: string, data: RemoveUserDto): Promise<string> => {
         const response = await api.patch<ApiRemoveUserResponseDto>(`${baseURL}/removeUser/${id}`, data);
