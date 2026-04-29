@@ -22,6 +22,8 @@ export const authApi = {
         const response = await api.post<ApiRegisterResponseDto>(`${baseURL}/register`, data);
         return mapRegisterResponse(response);
     },
+    
+    //TODO: endpoint for logout
 
     removeUser: async (id: string, data: RemoveUserDto): Promise<string> => {
         const response = await api.patch<ApiRemoveUserResponseDto>(`${baseURL}/removeUser/${id}`, data);

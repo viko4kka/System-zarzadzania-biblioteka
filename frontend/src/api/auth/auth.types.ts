@@ -32,7 +32,10 @@ export interface RegisterResponseDto {
 // Cała odpowiedź backendu (data + message)
 export interface ApiLoginResponseDto {
   message: string;
-  data: LoginResponseDto;
+  id: string;
+  name: string;
+  is_Admin: boolean;
+  is_Banned: boolean;
 }
 
 export interface ApiRegisterResponseDto {

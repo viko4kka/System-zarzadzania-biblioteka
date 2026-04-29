@@ -4,11 +4,11 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { Button } from "../../../../ui/Button";
 
 import { motion } from "motion/react";
-
-type LoginFormType = {
-  email: string;
-  password: string;
-};
+import { useLogin } from "../../../../hooks/auth/useLogin";
+import { useNavigate } from "react-router";
+import type { LoginDto } from "../../../../api/auth/auth.types";
+import PulseLoader from "react-spinners/PulseLoader";
+import toast from "react-hot-toast";
 
 interface LoginFormProps {
   onSwitch: () => void;
@@ -18,10 +18,23 @@ export default function LoginForm({ onSwitch }: LoginFormProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormType>();
 
-  const onSubmit: SubmitHandler<LoginFormType> = (data) => console.log(data);
+    formState: { errors },
+  } = useForm<LoginDto>();
+
+  const { isPending, mutate: loginUser } = useLogin();
+  const navigate = useNavigate();
+
+  const onSubmit: SubmitHandler<LoginDto> = (data) => {
+    loginUser(data, {
+      onSuccess: () => {
+        navigate("/books");
+      },
+      onError: () => {
+        toast.error("Invalid email or password");
+      },
+    });
+  };
 
   return (
     <motion.div
@@ -41,14 +54,14 @@ export default function LoginForm({ onSwitch }: LoginFormProps) {
         <div className="flex flex-col gap-y-1">
           <div
             className={`group flex items-center gap-x-1.5 rounded-xl border p-2 transition-all duration-300 ${
-              errors.email
+              errors.mail
                 ? "border-error"
                 : "border-border-light focus-within:border-main-blue"
             }`}
           >
             <span
               className={`500:text-sm text-xs transition-colors duration-300 ${
-                errors.email
+                errors.mail
                   ? "text-error"
                   : "text-text-form group-focus-within:text-main-blue"
               }`}
@@ -56,14 +69,20 @@ export default function LoginForm({ onSwitch }: LoginFormProps) {
               <GoMail />
             </span>
             <input
-              {...register("email", { required: true })}
+              {...register("mail", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Invalid email format",
+                },
+              })}
               type="text"
               className="text-text-form 500:text-sm w-full bg-transparent text-xs outline-none"
               placeholder="Enter email"
             />
           </div>
           <span className="text-error min-h-4 pl-1 text-left text-[9px]">
-            {errors.email ? "Email is required" : ""}
+            {errors.mail?.message ?? ""}
           </span>
         </div>
 
@@ -85,14 +104,16 @@ export default function LoginForm({ onSwitch }: LoginFormProps) {
               <SlLock />
             </span>
             <input
-              {...register("password", { required: true })}
-              type="text"
+              {...register("password", {
+                required: "Password is required",
+              })}
+              type="password"
               className="text-text-form 500:text-sm w-full bg-transparent text-xs outline-none"
               placeholder="Enter password"
             />
           </div>
           <span className="text-error min-h-4 pl-1 text-left text-[9px]">
-            {errors.password ? "Password is required" : ""}
+            {errors.password?.message ?? ""}
           </span>
         </div>
 
@@ -102,7 +123,7 @@ export default function LoginForm({ onSwitch }: LoginFormProps) {
           intent="login"
           size="medium"
         >
-          Log In
+          {isPending ? <PulseLoader size={8} color="white" /> : "Log In"}
         </Button>
       </form>
 

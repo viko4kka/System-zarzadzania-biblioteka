@@ -10,10 +10,10 @@ export const mapLoginResponse = (
   dto: ApiLoginResponseDto,
 ): { user: User; message: string } => ({
   user: {
-    id: dto.data.id,
-    name: dto.data.name,
-    isAdmin: dto.data.is_Admin,
-    isBanned: dto.data.is_Banned,
+    id: dto.id,
+    name: dto.name,
+    isAdmin: dto.is_Admin,
+    isBanned: dto.is_Banned,
   },
   message: dto.message,
 });

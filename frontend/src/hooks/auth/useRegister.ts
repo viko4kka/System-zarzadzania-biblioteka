@@ -6,10 +6,8 @@ import toast from "react-hot-toast";
 export const useRegister = () => {
   const { isPending, mutate } = useMutation({
     mutationFn: (data: RegisterDto) => authApi.register(data),
-    onSuccess: ({ registeredUser, message }) => {
-      console.log(message);
+    onSuccess: () => {
       toast.success("Account created! Please log in.");
-      console.log("Nowy użytkownik:", registeredUser);
     },
     onError: (error) => {
       console.error(error);

@@ -2,6 +2,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { GoMail, GoPencil } from "react-icons/go";
 import { SlLock } from "react-icons/sl";
 import { Button } from "../../../../ui/Button";
+import { PulseLoader } from "react-spinners";
 
 import { motion } from "motion/react";
 import type { RegisterDto } from "../../../../api/auth/auth.types";
@@ -11,17 +12,26 @@ interface RegisterFormProps {
   onSwitch: () => void;
 }
 
+interface RegisterFormData extends RegisterDto {
+  confirmPassword: string;
+}
+
 export default function RegisterForm({ onSwitch }: RegisterFormProps) {
   const {
     register,
     handleSubmit,
     reset,
+    getValues,
+
     formState: { errors },
-  } = useForm<RegisterDto>();
+  } = useForm<RegisterFormData>();
 
   const { isPending, mutate: registerUser } = useRegister();
 
-  const onSubmit: SubmitHandler<RegisterDto> = (data) => {
+  const onSubmit: SubmitHandler<RegisterFormData> = ({
+    confirmPassword: _confirmPassword,
+    ...data
+  }) => {
     registerUser(data, {
       onSuccess: () => {
         reset();
@@ -120,15 +130,20 @@ export default function RegisterForm({ onSwitch }: RegisterFormProps) {
               <GoMail />
             </span>
             <input
-              {...register("mail", { required: true })}
+              {...register("mail", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Invalid email format",
+                },
+              })}
               type="text"
-              // name="email"
               className="text-text-form 500:text-sm w-full bg-transparent text-xs outline-none"
               placeholder="Enter email"
             />
           </div>
           <span className="text-error min-h-4 pl-1 text-left text-[9px]">
-            {errors.mail ? "Email is required" : ""}
+            {errors.mail?.message ?? ""}
           </span>
         </div>
 
@@ -150,7 +165,13 @@ export default function RegisterForm({ onSwitch }: RegisterFormProps) {
               <SlLock />
             </span>
             <input
-              {...register("password", { required: true })}
+              {...register("password", {
+                required: "Password is required",
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters",
+                },
+              })}
               type="password"
               name="password"
               className="text-text-form 500:text-sm w-full bg-transparent text-xs outline-none"
@@ -158,10 +179,10 @@ export default function RegisterForm({ onSwitch }: RegisterFormProps) {
             />
           </div>
           <span className="text-error min-h-4 pl-1 text-left text-[9px]">
-            {errors.password ? "Password is required" : ""}
+            {errors.password?.message ?? ""}
           </span>
         </div>
-        {/* 
+
         <div className="flex flex-col gap-y-1">
           <div
             className={`group flex items-center gap-x-1.5 rounded-xl border p-2 transition-all duration-300 ${
@@ -180,17 +201,21 @@ export default function RegisterForm({ onSwitch }: RegisterFormProps) {
               <SlLock />
             </span>
             <input
-              {...register("confirmPassword", { required: true })}
-              type="text"
+              {...register("confirmPassword", {
+                required: "Confirm password is required",
+                validate: (v) =>
+                  v === getValues("password") || "Passwords do not match",
+              })}
+              type="password"
               name="confirmPassword"
               className="text-text-form 500:text-sm w-full bg-transparent text-xs outline-none"
               placeholder="Enter password again"
             />
           </div>
           <span className="text-error min-h-4 pl-1 text-left text-[9px]">
-            {errors.confirmPassword ? " Confirm password is required" : ""}
+            {errors.confirmPassword?.message ?? ""}
           </span>
-        </div> */}
+        </div>
 
         <Button
           type="submit"
@@ -199,7 +224,7 @@ export default function RegisterForm({ onSwitch }: RegisterFormProps) {
           size="medium"
           disabled={isPending}
         >
-          {isPending ? "Loading" : "Register"}
+          {isPending ? <PulseLoader size={8} color="white" /> : "Register"}
         </Button>
       </form>
 
