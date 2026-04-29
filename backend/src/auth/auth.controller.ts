@@ -3,6 +3,7 @@ import {
   Post,
   Body,
   Res,
+  Req,
   HttpCode,
   HttpStatus,
   UsePipes,
@@ -13,7 +14,6 @@ import type { Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-
 const IS_PROD = process.env.NODE_ENV === 'production';
 
 @ApiTags('Authentication')
@@ -145,5 +145,37 @@ export class AuthController {
     });
 
     return { id, name, is_Admin, is_Banned };
+  }
+
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Wylogowanie użytkownika',
+    description: 'Usuwa token z HttpOnly cookie',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Użytkownik wylogowany pomyślnie',
+    schema: {
+      example: { success: true },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Użytkownik niezalogowany',
+    schema: {
+      example: {
+        statusCode: 401,
+        message: 'Użytkownik niezalogowany',
+        error: 'Unauthorized',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Wewnętrzny błąd serwera',
+  })
+  async logout(@Req() req: any, @Res({ passthrough: true }) res: Response) {
+    return this.authService.logout(req, res);
   }
 }
