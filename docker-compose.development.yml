@@ -35,6 +35,12 @@ services:
     environment:
       NODE_ENV: development
       API_PROXY_TARGET: "http://backend:4000"
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - ./frontend/index.html:/app/index.html
+      - ./frontend/vite.config.js:/app/vite.config.js
+      - /app/node_modules
     build:
       context: .
       dockerfile: ./devops/docker/Dockerfile.frontend
