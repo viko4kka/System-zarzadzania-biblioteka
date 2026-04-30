@@ -13,8 +13,64 @@ datasource db {
   provider = "postgresql"
 }
 
-// TODO: Zamodelowanie bazy danych
 model User {
   id Int @default(autoincrement()) @id
+  mail String @unique
+  password String
   name String
+  lastname String
+  is_Admin Boolean @default(false)
+  is_Banned Boolean @default(false)
+  is_Removed Boolean @default(false)
+
+  loans Loan[]
+}
+
+model Loan {
+  id_loan Int @default(autoincrement()) @id
+  user_id Int 
+  copy_id Int 
+  start_date DateTime
+  return_date DateTime?
+
+  user User @relation(fields: [user_id], references: [id])
+  copy Copy @relation(fields: [copy_id], references: [id_copy])
+}
+
+model Copy {
+  id_copy Int @default(autoincrement()) @id
+  book_id Int 
+  is_actual Boolean @default(true)
+
+  book Book @relation(fields: [book_id], references: [id_book])
+  loans Loan[]
+}
+
+model Book {
+  id_book Int @default(autoincrement()) @id
+  title String
+  year Int
+  cover String?
+  ISBN String?
+  publisher_id Int
+
+  publisher Publisher @relation(fields: [publisher_id], references: [id_publisher])
+  copies Copy[]
+
+  authors Author[]
+}
+
+model Author {
+  id_author Int @default(autoincrement()) @id
+  author_name String
+  author_lastname String
+
+  books Book[]
+}
+
+model Publisher {
+  id_publisher Int @default(autoincrement()) @id
+  publisher_name String
+
+  books Book[]
 }

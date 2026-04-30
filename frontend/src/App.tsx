@@ -1,12 +1,12 @@
-import { useState } from "react";
-import "./App.css";
 import { Router } from "./Router";
+import { Toaster } from "react-hot-toast";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <Router />
+    <>
+      <Router />
+      <Toaster />
+    </>
   );
 }
 

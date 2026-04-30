@@ -16,6 +16,8 @@ npm install
 npx prisma generate
 # Wyczyszczenie bazy danych
 npx prisma migrate reset 
+# Załadowanie seeda
+npx prisma db seed
 ```
 
 ## Uruchamianie
@@ -49,3 +51,15 @@ npx prisma generate
 # Utworzenie nowej migracji
 npx prisma migrate dev
 ```
+
+## Seed
+
+**Admin:** `admin@prisma.io`
+
+**Hasła:** `haslo1234`
+
+**Użytkownicy:**
+- `user@test.pl`: Zwyczajny
+- `test@test.pl`: Zbanowany
+- `test1@test.pl`: Usunięty
+- `test2@test.pl`: Zbanowany i Usunięty

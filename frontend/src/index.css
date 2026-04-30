@@ -1,11 +1,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;600;700&display=swap');
 @import "tailwindcss";
 
- @theme{
+ @theme {
   --breakpoint-xs: 30rem;
 
   --color-main-navy-blue: #082f49;
   --color-main-blue: #0284c7;
+  --color-main-blue-hover: #0369a1;
+  --color-main-navy-blue-hover: #0c4a6e;
+  /*--color-main-light-blue: #e0f2ef;*/
+  --color-mainBgLight: #eeeeee;
+  --color-main-light-blue-hover: #f8fafc;
+  --color-error: #ef4444;
+  --color-bdRed: #fecaca;
+  --color-lightYellow: #f0f8c5;
+  --color-yellowText: #6c6e28;
+  --color-borderGray: #e5e7eb;
+  --color-greenBg: #d9f8c7;
+  --color-greenText: #65a30d;
+  --color-border-light: #e5e7eb;
+
+  --breakpoint-500: 500px;
+  --breakpoint-800: 800px;
+
   --color-main-light-blue: #E0F2FE;
   --color-highlight: #f0f8c5;
   --color-font-highlight: #6C6E28;
