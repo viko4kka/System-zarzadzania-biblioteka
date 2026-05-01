@@ -40,7 +40,7 @@ export interface UserDataResponseDto {
     mail: string;
     name: string;
     lastname: string;
-    joindate: Date;
+    //joindate: Date;
     is_Admin: boolean;
     is_Banned: boolean;
     borrowed_Books: BorrowedBookDto[];
@@ -76,7 +76,7 @@ export interface UserData {
     mail: string;
     name: string;
     lastname: string;
-    joindate: Date;
+    //joindate: Date;
     isAdmin: boolean;
     isBanned: boolean;
     borrowedBooks: BorrowedBook[];

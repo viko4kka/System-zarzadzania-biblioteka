@@ -9,6 +9,8 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import type {  JSX } from "react"
 import LogInRequirementModal from "./LogInRequirementModal";
+import { useLogout } from "../../hooks/auth/useLogOut";
+import { Button } from "../../ui/Button";
 
 type SidebarProps ={
 isAdmin:boolean
@@ -100,6 +102,7 @@ const adminNavLinks: NavLinkType[]=[
 ]
 
 export default function Sidebar({isAdmin, isLoggedIn}: SidebarProps){
+    const { logout } = useLogout();
 
 const [logoutModalOpened, setLogoutModalOpened] = useState<boolean>(false)
 const [loginModalOpened, setLoginModalOpened] = useState<boolean>(false)
@@ -107,52 +110,43 @@ const [loginModalOpened, setLoginModalOpened] = useState<boolean>(false)
 const navigate= useNavigate();
 const location = useLocation();
 
-const logout = ()=>{
-    //TODO remove tokens !!!!!!!!!!!!!!!
-    //window.location.assign('/login');
-}
-
-const userOrAdminNavLinks =isAdmin ? adminNavLinks : userNavLinks
+//const userOrAdminNavLinks =isAdmin ? adminNavLinks : userNavLinks
+const choosenNavLinks =isLoggedIn ? isAdmin ? adminNavLinks : userNavLinks : guestNavLinks
 
     return(<>
-    <CustomModal  isOpened={logoutModalOpened} onClose={()=>{setLogoutModalOpened(false)}}
-    footer={
-
-        <div className=" w-fulls h-12 flex justify-center text-xl ">
-            <button onClick={()=>{setLogoutModalOpened(false)}} className="bg-white border border-gray-100 shadow-gray-400 w-32 h-10 p-0 flex justify-center items-center shadow-md rounded-xl mr-6 ">No</button> 
-            <button onClick={logout} className="bg-main-navy-blue text-white w-32 h-10 p-0 flex justify-center items-center rounded-xl ml-6">Yes</button>
-        </div>
-    }>
-        <span className="flex justify-center text-2xl text-center text-main-navy-blue mx-8 my-4">Are you sure you want to log out?</span>
+    <CustomModal isOpened={logoutModalOpened} onClose={()=>{setLogoutModalOpened(false)}}>
+        <CustomModal.Content className="flex justify-center items-center text-2xl text-center text-main-navy-blue h-28">Are you sure you want to log out?</CustomModal.Content>
+        <CustomModal.Footer className="w-full  flex justify-center text-xl ">        
+            <Button intent='third' onClick={()=>{setLogoutModalOpened(false)}} className=" h-10 lg:w-32  lg:mr-6 w-24 mr-2 ">No</Button> 
+            <Button intent='secondary' onClick={logout} className="h-10 lg:w-32  lg:ml-6 w-24 ml-2">Yes</Button>
+        </CustomModal.Footer>
     </CustomModal>
 
     <LogInRequirementModal onClose={()=>{setLoginModalOpened(false)}} isOpened={loginModalOpened}/>
-        
-            <div className="flex flex-col justify-between h-full z-10 bg-white w-(20vw) max-w-(95vw) min-w-xs shadow-sm border-r border-gray-200"> 
+            <div className="flex flex-col justify-between h-full z-10 bg-white w-[320px]  min-w-xs shadow-sm border-r border-gray-200"> 
                         <div >
-                            <div className="  mt-12 mb-16  flex place-content-center w-full "><img className=' w-40' src='/logo.png'/></div>    
-                            
-                               { isLoggedIn ? userOrAdminNavLinks.map((navLink, idx)=> { return (<NavLink key={"navLink"+idx}  path={navLink.path} label={navLink.label} Icon={navLink.Icon} active={location.pathname===navLink.path}/>)})
-                                :<>
-                                    {/* <NavLink key={"navLink0"}  path={'/books'} label='Catalog' Icon={ ()=> <BiFolder/>} active={location.pathname==='/books'}/> */}
-                                    {guestNavLinks.map((navLink, idx)=><NavLink path={navLink.path} key={"navLink"+idx+1} onClick={(e)=>{e.preventDefault(); 
+                            <div className="  mt-12 mb-16 flex place-content-center w-full "><img className=' w-40' src='/logo.png'/></div>    
+                               { choosenNavLinks.map((navLink, idx)=> { 
+                                return (<NavLink key={"navLink"+idx}  path={navLink.path} label={navLink.label} Icon={navLink.Icon} active={location.pathname===navLink.path}
+                                onClick={(e)=>{e.preventDefault(); 
                                     const splittedPath = navLink.path.split('/')
-                                    console.log(splittedPath)
                                     if(isLoggedIn){
                                       navigate(navLink.path)
                                     } else if (splittedPath[1]==='admin' || splittedPath[1]==='user'){
                                       setLoginModalOpened(true);
+                                    }else{
+                                       navigate(navLink.path)
                                     }
-                                     }} label={navLink.label} Icon={navLink.Icon} active={location.pathname===navLink.path}/>)}
-                                </>   
+                                     }}
+                                />)}) 
                             }
                                 
                         </div>
                         
                         {
-                            isLoggedIn && <Link to='' onClick={()=>{setLogoutModalOpened(true)}}  className="flex transition-colors  duration-300  ease-out mb-12 hover:bg-red-100  hover:text-red-600 h-12 items-center m-3 mx-4 px-8 rounded-md " >
-                            <span className=" mr-4 text-2xl"> <BiLogOut/></span>Log out
-                        </Link>
+                            isLoggedIn && <Link to='' onClick={()=>{setLogoutModalOpened(true)}}  className="flex transition-all duration-300 mb-12 hover:bg-red-100  hover:text-red-600 h-12 items-center m-3 mx-4 px-8 rounded-lg " >
+                                            <span className=" mr-4 text-2xl"> <BiLogOut/></span>Log out
+                                          </Link>
                         }
                         
                         

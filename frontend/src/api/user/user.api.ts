@@ -10,7 +10,7 @@ import type {
 } from "./user.types";
 import { mapBanUnbanResponse, mapMakeAdminResponse, mapUserDataResponse, mapUsersListResponse } from "./user.mapper";
 
-const baseURL = "/user";
+const baseURL = "/api/user";
 
 export const userApi = {
     makeAdmin: async (id: string): Promise<{ 
@@ -44,6 +44,11 @@ export const userApi = {
 
     user: async (id: string): Promise<UserData> => {
         const response = await api.get<UserDataResponseDto>(`${baseURL}/${id}`);
+        return mapUserDataResponse(response);
+    },
+    loggedInUser: async (): Promise<UserData> => {
+        
+        const response = await api.get<UserDataResponseDto>(`${baseURL}`);
         return mapUserDataResponse(response);
     },
 };
