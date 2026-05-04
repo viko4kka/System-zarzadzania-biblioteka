@@ -161,4 +161,17 @@ export class AuthService {
       is_Banned: user.is_Banned,
     };
   }
+
+  logout(req: Request, res: import('express').Response) {
+    this.verifyToken(req);
+
+    res.clearCookie('access_token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+    });
+
+    return { success: true };
+  }
 }
