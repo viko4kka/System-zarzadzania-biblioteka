@@ -52,7 +52,7 @@ export class UserController {
       const pageNum = page ? parseInt(page) : 1;
       const limitNum = limit ? parseInt(limit) : 10;
 
-      return this.userService.searchUsers(pageNum, limitNum, search);
+      return await this.userService.searchUsers(pageNum, limitNum, search);
     }
 
     // Bez parametrów - zwraca dane zalogowanego użytkownika
@@ -69,7 +69,7 @@ export class UserController {
   async getUserById(@Param('id') id: string, @Req() req: Request) {
     const payload = this.authService.verifyToken(req);
     if (payload.is_Admin == true || payload.id == parseInt(id)) {
-      return this.userService.getUser(parseInt(id));
+      return await this.userService.getUser(parseInt(id));
     }
     throw new UnauthorizedException(
       'Nie masz dostępu do danych tego użytkownika',
@@ -94,7 +94,7 @@ export class UserController {
     }
 
     // Nadanie uprawnień administratora
-    return this.userService.makeAdmin(parseInt(id));
+    return await this.userService.makeAdmin(parseInt(id));
   }
 
   @Patch(':id/ban')
@@ -114,7 +114,7 @@ export class UserController {
       );
     }
 
-    return this.userService.ban(parseInt(id));
+    return await this.userService.ban(parseInt(id));
   }
 
   @Patch(':id/unban')
@@ -134,6 +134,6 @@ export class UserController {
       );
     }
 
-    return this.userService.unban(parseInt(id));
+    return await this.userService.unban(parseInt(id));
   }
 }
