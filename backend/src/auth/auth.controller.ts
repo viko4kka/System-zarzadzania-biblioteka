@@ -8,12 +8,17 @@ import {
   HttpStatus,
   UsePipes,
   ValidationPipe,
+  Patch,
+  UnauthorizedException,
+  Param,
+  ForbiddenException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
-import type { Response } from 'express';
+import type { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { RemoveUserDto } from './dto/removeUser.dto';
 const IS_PROD = process.env.NODE_ENV === 'production';
 
 @ApiTags('Authentication')
@@ -157,7 +162,10 @@ export class AuthController {
     status: 200,
     description: 'Użytkownik wylogowany pomyślnie',
     schema: {
-      example: { success: true },
+      example: {
+        id: 1,
+        is_Removed: true,
+      },
     },
   })
   @ApiResponse({
@@ -175,7 +183,112 @@ export class AuthController {
     status: 500,
     description: 'Wewnętrzny błąd serwera',
   })
-  logout(@Req() req: any, @Res({ passthrough: true }) res: Response) {
+  logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     return this.authService.logout(req, res);
+  }
+
+  @Patch('removeUser')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Usuwanie konta zalogowanego użytkownika',
+    description:
+      'Usuwa konto zalogowanego użytkownika jeżeli potwierdzi czynność swoim hasłem',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Użytkownik usunięty pomyślnie',
+    schema: {
+      example: { success: true },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Błędne hasło',
+    schema: {
+      example: {
+        statusCode: 401,
+        message: 'Błędne hasło',
+        error: 'Unauthorized',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Użytkownik niezalogowany',
+    schema: {
+      example: {
+        statusCode: 401,
+        message: 'Użytkownik niezalogowany',
+        error: 'Unauthorized',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Wewnętrzny błąd serwera',
+  })
+  async removeUser(@Body() dto: RemoveUserDto, @Req() req: Request) {
+    const payload = await this.authService.verifyToken(req);
+
+    const verify = await this.authService.verifyPassword(
+      payload.id,
+      dto.password,
+    );
+    if (verify == true) {
+      return this.authService.removeUser(payload.id);
+    }
+    throw new UnauthorizedException('Błędne hasło');
+  }
+
+  @Patch('removeUser/:id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Usuwanie konta użytkownika przez administratora',
+    description: 'Usuwa konto podanego użytkownika. Tylko administrator.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Użytkownik usunięty pomyślnie',
+    schema: {
+      example: {
+        id: 1,
+        is_Removed: true,
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Tylko administrator może blokować użytkowników',
+    schema: {
+      example: {
+        statusCode: 403,
+        message: 'Tylko administrator może blokować użytkowników',
+        error: 'Forbidden',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Użytkownik niezalogowany',
+    schema: {
+      example: {
+        statusCode: 401,
+        message: 'Użytkownik niezalogowany',
+        error: 'Unauthorized',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Wewnętrzny błąd serwera',
+  })
+  async removeUserById(@Param('id') id: string, @Req() req: Request) {
+    const payload = await this.authService.verifyToken(req);
+    if (payload.is_Admin !== true) {
+      throw new ForbiddenException(
+        'Tylko administrator może blokować użytkowników',
+      );
+    }
+    return this.authService.removeUser(parseInt(id));
   }
 }
