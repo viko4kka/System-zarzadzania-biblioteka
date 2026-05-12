@@ -15,6 +15,7 @@ export class UserService {
         lastname: true,
         is_Admin: true,
         is_Banned: true,
+        is_Removed: true,
         loans: true,
       },
     });
@@ -54,6 +55,7 @@ export class UserService {
           mail: true,
           is_Admin: true,
           is_Banned: true,
+          is_Removed: true,
         },
         orderBy: {
           id: 'asc',
