@@ -56,7 +56,7 @@ export const mapUserDataResponse = (dto: UserDataResponseDto): UserData => ({
     mail: dto.mail,
     name: dto.name,
     lastname: dto.lastname,
-    joindate: dto.joindate,
+    // joindate: dto.joindate,
     isAdmin: dto.is_Admin,
     isBanned: dto.is_Banned,
     borrowedBooks:(dto.borrowed_Books ?? []).map(mapBorrowedBook)
