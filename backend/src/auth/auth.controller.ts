@@ -163,8 +163,7 @@ export class AuthController {
     description: 'Użytkownik wylogowany pomyślnie',
     schema: {
       example: {
-        id: 1,
-        is_Removed: true,
+        success: true,
       },
     },
   })
@@ -198,7 +197,10 @@ export class AuthController {
     status: 200,
     description: 'Użytkownik usunięty pomyślnie',
     schema: {
-      example: { success: true },
+      example: {
+        id: 1,
+        is_Removed: true,
+      },
     },
   })
   @ApiResponse({
@@ -257,12 +259,12 @@ export class AuthController {
     },
   })
   @ApiResponse({
-    status: 401,
-    description: 'Tylko administrator może blokować użytkowników',
+    status: 403,
+    description: 'Tylko administrator może usuwać użytkowników',
     schema: {
       example: {
         statusCode: 403,
-        message: 'Tylko administrator może blokować użytkowników',
+        message: 'Tylko administrator może usuwać użytkowników',
         error: 'Forbidden',
       },
     },
@@ -286,7 +288,7 @@ export class AuthController {
     const payload = await this.authService.verifyToken(req);
     if (payload.is_Admin !== true) {
       throw new ForbiddenException(
-        'Tylko administrator może blokować użytkowników',
+        'Tylko administrator może usuwać użytkowników',
       );
     }
     return this.authService.removeUser(parseInt(id));
