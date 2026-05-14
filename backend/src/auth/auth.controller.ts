@@ -175,7 +175,7 @@ export class AuthController {
     status: 500,
     description: 'Wewnętrzny błąd serwera',
   })
-  async logout(@Req() req: any, @Res({ passthrough: true }) res: Response) {
+  logout(@Req() req: any, @Res({ passthrough: true }) res: Response) {
     return this.authService.logout(req, res);
   }
 }
