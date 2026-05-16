@@ -50,10 +50,8 @@ async addBook(dto: {
   }
 
   async searchBooks(page: number, limit: number, search?: string) {
-    const validPage  = Math.max(1, page);
-    const validLimit = Math.min(Math.max(1, limit), 100);
-    const skip       = (validPage - 1) * validLimit;
 
+   
     const where = search
       ? {
           OR: [
@@ -64,24 +62,31 @@ async addBook(dto: {
         }
       : {};
 
-    const [data, total] = await Promise.all([
-      this.prisma.book
-        .findMany({
-          where,
-          skip,
-          take: validLimit,
-          select: {
-            id_book: true,
-            title: true,
-            year: true,
-            ISBN: true,
-            cover: true,
-            authors: { select: { id_author: true, author_name: true, author_lastname: true } },
-          },
-          orderBy: { id_book: 'asc' },
-        }),
-      this.prisma.book.count({ where }),
-    ]).catch(() => { throw new InternalServerErrorException('Błąd podczas wyszukiwania książek'); });
+    const total = await this.prisma.book
+      .count({ where })
+      .catch(() => { throw new InternalServerErrorException('Błąd bazy danych'); });
+    const validLimit = Math.min(Math.max(1, limit), 100);
+    const totalPages = Math.max(1, Math.ceil(total / validLimit));
+    const validPage = Math.min(Math.max(1, page), totalPages);
+    const skip = (validPage - 1) * validLimit;
+
+
+    const data = await this.prisma.book
+      .findMany({
+        where,
+        skip,
+        take: validLimit,
+        select: {
+          id_book: true,
+          title: true,
+          year: true,
+          ISBN: true,
+          cover: true,
+          authors: { select: { id_author: true, author_name: true, author_lastname: true } },
+        },
+        orderBy: { id_book: 'asc' },
+      })
+      .catch(() => { throw new InternalServerErrorException('Błąd podczas wyszukiwania książek'); });
 
     return {
       data,
@@ -89,11 +94,10 @@ async addBook(dto: {
         page:       validPage,
         limit:      validLimit,
         total,
-        totalPages: Math.ceil(total / validLimit),
+        totalPages,
       },
     };
   }
-
   async getBook(bookId: number) {
     const book = await this.prisma.book
       .findUnique({
