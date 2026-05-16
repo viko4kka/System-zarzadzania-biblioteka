@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 
 @Injectable()
@@ -15,6 +15,7 @@ export class UserService {
         lastname: true,
         is_Admin: true,
         is_Banned: true,
+        is_Removed: true,
         loans: true,
       },
     });
@@ -54,6 +55,7 @@ export class UserService {
           mail: true,
           is_Admin: true,
           is_Banned: true,
+          is_Removed: true,
         },
         orderBy: {
           id: 'asc',
@@ -81,7 +83,7 @@ export class UserService {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
-    
+
     if (!user) {
       throw new NotFoundException('Użytkownik nie został znaleziony');
     }
@@ -105,7 +107,7 @@ export class UserService {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
-    
+
     if (!user) {
       throw new NotFoundException('Użytkownik nie został znaleziony');
     }
@@ -129,7 +131,7 @@ export class UserService {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
-    
+
     if (!user) {
       throw new NotFoundException('Użytkownik nie został znaleziony');
     }
@@ -147,5 +149,4 @@ export class UserService {
 
     return updatedUser;
   }
-
 }
