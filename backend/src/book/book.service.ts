@@ -99,29 +99,40 @@ async addBook(dto: {
     };
   }
   async getBook(bookId: number) {
-    const book = await this.prisma.book
-      .findUnique({
-        where: { id_book: bookId },
-        select: {
-          id_book: true,
-          title: true,
-          year: true,
-          cover: true,
-          ISBN: true,
-          publisher_id: true,
-          copies: {
-            select: { id_copy: true, is_actual: true },
-          },
+  const book = await this.prisma.book
+    .findUnique({
+      where: { id_book: bookId },
+      select: {
+        id_book: true,
+        title: true,
+        year: true,
+        cover: true,
+        ISBN: true,
+        publisher_id: true,
+        _count: {
+          select: { copies: true },
         },
-      })
-      .catch(() => { throw new InternalServerErrorException('Błąd bazy danych'); });
+      },
+    })
+    .catch(() => { throw new InternalServerErrorException('Błąd bazy danych'); });
 
-    if (!book) throw new NotFoundException(`Książka o id ${bookId} nie istnieje`);
+  if (!book) throw new NotFoundException(`Książka o id ${bookId} nie istnieje`);
 
-    return {
-      ...book,
-      totalCopies:     book.copies.length,
-      availableCopies: book.copies.filter(c => c.is_actual).length,
-    };
+  const availableCopies = await this.prisma.copy
+    .count({
+      where: { book_id: bookId, is_actual: true },
+    })
+    .catch(() => { throw new InternalServerErrorException('Błąd bazy danych'); });
+
+  return {
+    id_book:         book.id_book,
+    title:           book.title,
+    year:            book.year,
+    cover:           book.cover,
+    ISBN:            book.ISBN,
+    publisher_id:    book.publisher_id,
+    totalCopies:     book._count.copies,
+    availableCopies,
+  };
   }
 }
