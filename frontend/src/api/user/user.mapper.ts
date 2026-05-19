@@ -59,5 +59,5 @@ export const mapUserDataResponse = (dto: UserDataResponseDto): UserData => ({
     joindate: dto.joindate,
     isAdmin: dto.is_Admin,
     isBanned: dto.is_Banned,
-    borrowedBooks: dto.borrowed_Books.map(mapBorrowedBook)
+    borrowedBooks:(dto.borrowed_Books ?? []).map(mapBorrowedBook)
 });
