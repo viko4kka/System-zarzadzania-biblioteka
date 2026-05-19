@@ -19,6 +19,7 @@ import UProfile from "./pages/user/profile/page";
 
 import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "../components/ProtectedRoute";
+import Forbidden from "./pages/Forbidden";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
         <Books />
       </MainLayout>
     ),
+  },
+  {
+    path: "/403",
+    element: <Forbidden />,
   },
 
   {
