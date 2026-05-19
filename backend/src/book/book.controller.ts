@@ -50,7 +50,7 @@ export class BookController {
     },
   })
   async addBook(@Body() dto: AddBookDto, @Req() req: Request) {
-    const payload = this.authService.verifyToken(req);
+    const payload = await this.authService.verifyToken(req);
     if (!payload.is_Admin) {
       throw new ForbiddenException('Tylko administrator może dodawać książki');
     }
@@ -64,7 +64,7 @@ export class BookController {
     description: 'Tylko administrator może usuwać książki.',
   })
   async removeBook(@Body('id') id: number, @Req() req: Request) {
-    const payload = this.authService.verifyToken(req);
+    const payload = await this.authService.verifyToken(req);
     if (!payload.is_Admin) {
       throw new ForbiddenException('Tylko administrator może usuwać książki');
     }
