@@ -5,7 +5,7 @@ import { UserModule } from './user/user.module';
 import { BookModule } from './book/book.module';
 
 @Module({
-  imports: [HealthModule, AuthModule, UserModule,BookModule],
+  imports: [HealthModule, AuthModule, UserModule, BookModule],
   controllers: [],
   providers: [],
 })
