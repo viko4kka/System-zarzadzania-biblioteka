@@ -164,7 +164,11 @@ export class BookService {
           ISBN: true,
           publisher_id: true,
           _count: {
-            select: { copies: true },
+            select: { copies:
+              {
+                where:{is_actual:true}
+              }
+            },
           },
         },
       })
@@ -176,12 +180,16 @@ export class BookService {
       throw new NotFoundException(`Książka o id ${bookId} nie istnieje`);
 
     const availableCopies = await this.prisma.copy
-      .count({
-        where: { book_id: bookId, is_actual: true },
-      })
-      .catch(() => {
-        throw new InternalServerErrorException('Błąd bazy danych');
-      });
+    .count({
+      where: {
+        book_id: bookId,
+        is_actual: true,
+        loans: {
+          none: { return_date: null },
+        },
+      },
+    })
+  .catch(() => { throw new InternalServerErrorException('Błąd bazy danych'); });
 
     return {
       id_book: book.id_book,
