@@ -1,12 +1,15 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuthStore } from "../src/store/authStore";
+import { useLoggedInUserData } from "../src/hooks/user/useLoggedInUserData";
+import { PulseLoader } from "react-spinners";
 
 interface ProtectedRouteProps {
   admin?: boolean;
 }
 
 export default function ProtectedRoute({ admin = false }: ProtectedRouteProps) {
-  const user = useAuthStore((state) => state.user);
+  const { user, isLoading } = useLoggedInUserData();
+
+  if (isLoading) return <PulseLoader size={12} color="white" />;
 
   if (!user) return <Navigate to="/403" replace />;
 
