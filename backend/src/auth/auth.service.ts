@@ -3,6 +3,7 @@ import {
   ConflictException,
   InternalServerErrorException,
   UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
@@ -32,6 +33,7 @@ export interface JwtPayload {
   id: number;
   name: string;
   is_Admin: boolean;
+  is_Banned: boolean;
 }
 
 @Injectable()
@@ -43,17 +45,13 @@ export class AuthService {
       throw new Error('JWT_SECRET musi być zdefiniowany w .env');
     }
     // Wygeneruj JWT
-    const token = jwt.sign(
-      { id: user.id, name: user.name, is_Admin: user.is_Admin },
-      JWT_SECRET,
-      {
-        expiresIn: JWT_EXPIRES_IN,
-      },
-    );
+    const token = jwt.sign({ id: user.id, name: user.name }, JWT_SECRET, {
+      expiresIn: JWT_EXPIRES_IN,
+    });
     return token;
   }
 
-  verifyToken(req: Request) {
+  async verifyToken(req: Request) {
     const token = req.cookies?.access_token as string;
     if (!token) {
       throw new UnauthorizedException('Użytkownik niezalogowany');
@@ -61,15 +59,30 @@ export class AuthService {
     if (!JWT_SECRET) {
       throw new Error('JWT_SECRET musi być zdefiniowany w .env');
     }
+    let payload: JwtPayload;
     try {
-      const payload = jwt.verify(token, JWT_SECRET) as JwtPayload;
+      payload = jwt.verify(token, JWT_SECRET) as JwtPayload;
       if (!payload) {
         throw new UnauthorizedException('Błędny Token');
       }
-      return payload;
     } catch {
       throw new UnauthorizedException('Błędny Token');
     }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.id, is_Removed: false },
+      select: {
+        id: true,
+        is_Admin: true,
+        is_Banned: true,
+      },
+    });
+    if (!user) {
+      throw new UnauthorizedException('Użytkownik niezalogowany');
+    }
+    payload.is_Admin = user.is_Admin;
+    payload.is_Banned = user.is_Banned;
+    return payload;
   }
 
   async register(dto: RegisterDto): Promise<RegisterResult> {
@@ -123,7 +136,7 @@ export class AuthService {
     // Znajdź użytkownika po emailu
     const user = await this.prisma.user
       .findUnique({
-        where: { mail: dto.mail },
+        where: { mail: dto.mail, is_Removed: false },
         select: {
           id: true,
           name: true,
@@ -162,8 +175,8 @@ export class AuthService {
     };
   }
 
-  logout(req: Request, res: import('express').Response) {
-    this.verifyToken(req);
+  async logout(req: Request, res: import('express').Response) {
+    await this.verifyToken(req);
 
     res.clearCookie('access_token', {
       httpOnly: true,
@@ -173,5 +186,49 @@ export class AuthService {
     });
 
     return { success: true };
+  }
+
+  async removeUser(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId, is_Removed: false },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Użytkownik nie został znaleziony');
+    }
+
+    // Aktualizacja użytkownika
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId, is_Removed: false },
+      data: {
+        is_Removed: true,
+      },
+      select: {
+        id: true,
+        is_Removed: true,
+      },
+    });
+    return updatedUser;
+  }
+
+  async verifyPassword(id: number, password: string) {
+    const user = await this.prisma.user
+      .findUnique({
+        where: { id: id, is_Removed: false },
+        select: {
+          password: true,
+        },
+      })
+      .catch(() => {
+        throw new InternalServerErrorException('Błąd bazy danych');
+      });
+
+    if (!user) {
+      throw new NotFoundException('Użytkownik nie został znaleziony');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    return isPasswordValid;
   }
 }
