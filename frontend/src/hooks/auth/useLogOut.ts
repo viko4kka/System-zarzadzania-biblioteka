@@ -1,5 +1,5 @@
-import { useNavigate } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router";
 import { authApi } from "../../api/auth/auth.api";
 
 export const useLogout = () => {
@@ -8,6 +8,7 @@ export const useLogout = () => {
 
   const logout = async () => {
     await authApi.logout();
+
     queryClient.clear();
     navigate("/login");
   };
