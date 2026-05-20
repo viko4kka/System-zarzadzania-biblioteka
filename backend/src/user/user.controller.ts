@@ -9,11 +9,13 @@ import {
   Param,
   UnauthorizedException,
   ForbiddenException,
+  Body,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import type { Request } from 'express';
 import { UserService } from './user.service';
 import { AuthService } from '../auth/auth.service';
+import { UpdateUserDto } from './dto/updateUser.dto';
 
 @ApiTags('User')
 @Controller('user')
@@ -153,4 +155,20 @@ export class UserController {
 
     return await this.userService.unban(parseInt(id));
   }
+
+
+  @Patch('updateUser')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Zmiana danych użytkownika',
+    description:
+      'Endpoint pozwala użytkownikowi na zmianę swojego hasła, imienia i nazwiska po wczesniejszym podaniu hasła.',
+  })
+  async updateData(@Body() dto: UpdateUserDto, @Req() req: Request) {
+    const payload = await this.authService.verifyToken(req);
+    
+    return await this.userService.updateUser(payload.id, dto.name, dto.lastname, dto.password);
+  }
+
+
 }
