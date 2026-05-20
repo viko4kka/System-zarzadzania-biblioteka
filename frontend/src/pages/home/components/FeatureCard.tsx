@@ -10,7 +10,7 @@ function FeatureCard({ Icon, title, description }: FeatureCardProps) {
     return (
         <div 
             style={{ backgroundColor: 'rgb(249, 249, 249)' }}
-            className="flex-1 p-6 rounded-2xl border border-gray-100 flex flex-col gap-3 shadow-sm"
+            className="flex-1 p-6 rounded-2xl border border-gray-100 flex flex-col gap-3 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-1.5 hover:shadow-md hover:border-main-blue/30"
         >
             <div className="flex items-center gap-3">
                 <div className="p-2 bg-main-light-blue/20 rounded-xl flex items-center justify-center text-main-blue">
