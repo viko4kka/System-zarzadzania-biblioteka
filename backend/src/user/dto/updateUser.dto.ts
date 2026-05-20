@@ -7,7 +7,6 @@ export class UpdateUserDto {
     example: 'Tomasz',
   })
   @IsString()
-  @IsNotEmpty()
   name!: string;
 
   @ApiProperty({
@@ -15,15 +14,20 @@ export class UpdateUserDto {
     example: 'Nienacki',
   })
   @IsString()
-  @IsNotEmpty()
   lastname!: string;
 
   @ApiProperty({
-    description: 'Nowe hasło użytkownika',
+    description: 'Obecne hasło użytkownika',
     example: 'SuperTajneHaslo123!',
   })
   @IsString()
-  @IsNotEmpty()
-  password!: string;
+  oldpassword!: string;
+
+  @ApiProperty({
+    description: 'Nowe hasło użytkownika',
+    example: 'NoweSuperTajneHaslo123!',
+  })
+  @IsString()
+  newpassword!: string;
 
 }

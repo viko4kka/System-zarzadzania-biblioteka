@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import * as bcrypt from 'bcrypt';
-import { el } from '@faker-js/faker';
+
 
 const SALT_ROUNDS = 12;
 
@@ -154,7 +154,7 @@ export class UserService {
     return updatedUser;
   }
 
-  async updateUser(userId: number, newName: string, newLastname: string, newPassword: string) {
+  async updateUser(userId: number, newName: string, newLastname: string, oldPassword: string, newPassword: string) {
     // Pobranie danych użytkownika o zadanym ID
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -169,6 +169,12 @@ export class UserService {
     // Sprawdzenie czy użytkownik istnieje
     if (!user) {
       throw new NotFoundException('Użytkownik nie został znaleziony');
+    }
+
+    // Weryfikacja hasła
+    const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+    if (!isPasswordValid) {
+      throw new NotFoundException('Niepoprawne hasło');
     }
 
     // Jeśli nowe dane nie zostały podane, zachowujemy stare wartości
@@ -197,7 +203,6 @@ export class UserService {
         id: true,
         name: true,
         lastname: true,
-        password: true,
       },
     });
 

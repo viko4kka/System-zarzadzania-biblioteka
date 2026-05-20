@@ -10,6 +10,8 @@ import {
   UnauthorizedException,
   ForbiddenException,
   Body,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import type { Request } from 'express';
@@ -159,6 +161,7 @@ export class UserController {
 
   @Patch('updateUser')
   @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   @ApiOperation({
     summary: 'Zmiana danych użytkownika',
     description:
@@ -167,7 +170,7 @@ export class UserController {
   async updateData(@Body() dto: UpdateUserDto, @Req() req: Request) {
     const payload = await this.authService.verifyToken(req);
     
-    return await this.userService.updateUser(payload.id, dto.name, dto.lastname, dto.password);
+    return await this.userService.updateUser(payload.id, dto.name, dto.lastname, dto.oldpassword, dto.newpassword);
   }
 
 
