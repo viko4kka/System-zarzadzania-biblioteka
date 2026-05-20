@@ -18,7 +18,7 @@ import ULoans from "./pages/user/loans/page";
 import UProfile from "./pages/user/profile/page";
 
 import MainLayout from "./layouts/MainLayout";
-import ProtectedRoute from "../components/ProtectedRoute";
+import ProtectedRoute from "./ProtectedRoute";
 import Forbidden from "./pages/Forbidden";
 
 const router = createBrowserRouter([
