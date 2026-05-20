@@ -22,7 +22,7 @@ services:
     build:
       context: .
       dockerfile: ./devops/docker/Dockerfile.backend
-    command: npm run start
+      target: dev
     ports:
       - "4000:4000"
     healthcheck:
@@ -38,7 +38,7 @@ services:
     build:
       context: .
       dockerfile: ./devops/docker/Dockerfile.frontend
-    command: npm run dev
+      target: dev
     ports:
       - "3000:3000"
     depends_on:

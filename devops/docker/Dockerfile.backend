@@ -1,24 +1,44 @@
-# Node wersja 22
-FROM node:22
-
-# Katalog roboczy
+FROM node:22 AS base
 WORKDIR /app
 
-# Kopiowanie package.json i package-lock.json
-COPY backend/package*.json ./
+RUN apt-get update -y \
+  && apt-get install -y --no-install-recommends openssl ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
 
-# Instalacja zależności
-RUN npm install
-# Kopiowanie aplikacji do kontenera
+FROM base AS deps
+COPY backend/package.json backend/package-lock.json ./
+COPY backend/prisma ./prisma
+RUN npm ci
+
+FROM deps AS build
 COPY backend/ ./
-
-# Prisma
 RUN npx prisma generate
-# TODO: odkomentować gdy będzie istniała baza danych
-# RUN npx prisma migrate dev
+RUN npm run build
 
-# Ustawianie portu
+FROM base AS dev
+WORKDIR /app
+ENV NODE_ENV=development
+
+COPY backend/ ./
+COPY --from=deps /app/node_modules ./node_modules
+RUN npx prisma generate
+
 EXPOSE 4000
+CMD ["npm", "run", "start:dev"]
 
-# Uruchomienie aplikacji
-CMD ["npm", "run", "start"]
+FROM base AS prod-deps
+COPY backend/package.json backend/package-lock.json ./
+COPY backend/prisma ./prisma
+RUN npm ci --omit=dev
+
+FROM base AS prod
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY --from=prod-deps /app/node_modules ./node_modules
+COPY backend/package.json ./
+COPY backend/prisma ./prisma
+COPY --from=build /app/dist ./dist
+
+EXPOSE 4000
+CMD ["node", "dist/main.js"]
