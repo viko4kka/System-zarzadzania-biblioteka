@@ -14,9 +14,14 @@ import UHistory from './pages/user/history/page';
 import ULoans from './pages/user/loans/page';
 import UProfile from './pages/user/profile/page';
 import MainLayout from './layouts/MainLayout';
+import HomePage from './pages/home/page';
 
 const router = createBrowserRouter([
-
+// Homepage path
+  {
+    path: '/',
+    element: <HomePage />
+  },
 // Paths for public
   {
     path: '/login',
