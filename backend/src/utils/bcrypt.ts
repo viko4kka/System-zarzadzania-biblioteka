@@ -1,18 +1,14 @@
-const bcrypt = require('bcrypt');
+import * as bcrypt from 'bcrypt';
 
 // Ustawienie soli
 const SALT_ROUNDS = 12;
 
 // Funkcja do hashowania hasła
-export async function hash(string) {
-    return bcrypt
-        .genSalt(SALT_ROUNDS)
-        .then(salt => {
-            return bcrypt.hash(string, salt)
-        });
+export async function makeHash(password: string) {
+  return await bcrypt.hash(password, SALT_ROUNDS);
 }
 
 // Funkcja do weryfikacji hasła
-export async function verifyHash(string, hash) {
-    return await bcrypt.compare(string, hash);
+export async function verifyHash(password: string, hash: string) {
+  return await bcrypt.compare(password, hash);
 }
