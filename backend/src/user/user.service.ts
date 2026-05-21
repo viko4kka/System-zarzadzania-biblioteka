@@ -1,9 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import * as bcrypt from 'bcrypt';
+import { hash, verifyHash } from '../utils/bcrypt';
 
-
-const SALT_ROUNDS = 12;
 
 @Injectable()
 export class UserService {
@@ -172,7 +170,7 @@ export class UserService {
     }
 
     // Weryfikacja hasła
-    const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+    const isPasswordValid = await verifyHash(oldPassword, user.password);
     if (!isPasswordValid) {
       throw new NotFoundException('Niepoprawne hasło');
     }
@@ -192,7 +190,7 @@ export class UserService {
     }
     else {
       // Hashowanie hasła
-      passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+      passwordHash = await hash(newPassword);
     }
 
     // Aktualizacja użytkownika - zmiana imienia, nazwiska i hasła
