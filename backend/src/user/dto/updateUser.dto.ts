@@ -1,9 +1,4 @@
-import { 
-  IsString, 
-  IsNotEmpty, 
-  MinLength, 
-  MaxLength,
-} from 'class-validator';
+import { IsString, IsNotEmpty, MinLength, MaxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateUserDto {
@@ -37,7 +32,6 @@ export class UpdateUserDto {
   @MaxLength(64, { message: 'Hasło może mieć maksymalnie 64 znaki' })
   @IsNotEmpty()
   oldpassword!: string;
-  
 
   @ApiProperty({
     description: 'Nowe hasło użytkownika',
@@ -49,5 +43,4 @@ export class UpdateUserDto {
   @MinLength(8, { message: 'Hasło musi mieć co najmniej 8 znaków' })
   @MaxLength(64, { message: 'Hasło może mieć maksymalnie 64 znaki' })
   newpassword!: string;
-
 }
