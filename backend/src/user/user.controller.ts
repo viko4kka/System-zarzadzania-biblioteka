@@ -9,11 +9,21 @@ import {
   Param,
   UnauthorizedException,
   ForbiddenException,
+  Body,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiQuery,
+  ApiBody,
+  ApiResponse,
+} from '@nestjs/swagger';
 import type { Request } from 'express';
 import { UserService } from './user.service';
 import { AuthService } from '../auth/auth.service';
+import { UpdateUserDto } from './dto/updateUser.dto';
 
 @ApiTags('User')
 @Controller('user')
@@ -152,5 +162,81 @@ export class UserController {
     }
 
     return await this.userService.unban(parseInt(id));
+  }
+
+  @Patch('updateUser')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  @ApiOperation({
+    summary: 'Zmiana danych użytkownika',
+    description:
+      'Endpoint pozwala użytkownikowi na zmianę swojego hasła, imienia i nazwiska po wczesniejszym podaniu hasła. Gdy użytkownik nie chce zmieniać któregoś z pól, może je pozostawić puste.',
+  })
+  @ApiBody({ type: UpdateUserDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Dane użytkownika zostały zmienione pomyślnie',
+    schema: {
+      example: {
+        id: 1,
+        name: 'Tomasz',
+        lastname: 'Nienacki',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Nieprawidłowe dane wejściowe',
+    schema: {
+      example: {
+        message: ['Nieprawidłowe dane wejściowe.'],
+        error: 'Bad Request',
+        statusCode: 400,
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Użytkownik nie jest zalogowany',
+    schema: {
+      example: {
+        message: ['Użytkownik nie jest zalogowany.'],
+        error: 'Unauthorized',
+        statusCode: 401,
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Niepoprawne hasło',
+    schema: {
+      example: {
+        message: 'Niepoprawne hasło',
+        error: 'Unauthorized',
+        statusCode: 401,
+      },
+    },
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Wewnętrzny błąd serwera',
+    schema: {
+      example: {
+        message: 'Nie udało się zmienić danych użytkownika',
+        error: 'Internal Server Error',
+        statusCode: 500,
+      },
+    },
+  })
+  async updateData(@Body() dto: UpdateUserDto, @Req() req: Request) {
+    const payload = await this.authService.verifyToken(req);
+
+    return await this.userService.updateUser(
+      payload.id,
+      dto.name,
+      dto.lastname,
+      dto.oldpassword,
+      dto.newpassword,
+    );
   }
 }
