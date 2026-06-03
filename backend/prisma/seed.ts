@@ -337,19 +337,18 @@ async function main() {
 
     // Get list of new users and copies
     const user_list = users.map(({ id}) => id);
-    const copy_list = copy.map(({ id_copy }) => id_copy);
 
     // Add loan
     const loan = await prisma.loan.createMany({
         data: Array.from({ length: 1000}, (_, i) => {
             i = i+1;
-            const random_start_loan = faker.date.between({from: '2026-01-01', to: '2026-04-01'});
+            const random_start_loan = faker.date.between({from: '2026-01-01', to: '2026-03-31'});
             const random_return_loan = new Date(random_start_loan);
             random_return_loan.setDate(random_start_loan.getDate() + faker.number.int({min: 1, max: 30}));
             
             return {
                 user_id: user_list[faker.number.int({min: 0, max: user_list.length-1})],
-                copy_id: i, //copy_list[faker.number.int({min: 0, max: copy_list.length-1})],
+                copy_id: i,
                 start_date: random_start_loan,
                 return_date: random_return_loan,
             };
@@ -361,12 +360,12 @@ async function main() {
     const loan2 = await prisma.loan.createMany({
         data: Array.from({ length: 1000}, (_, i) => {
             i = i+1;
-            const random_start_loan = faker.date.between({from: '2026-01-01', to: '2026-04-01'});
-            const random_return_loan = faker.date.between({from: '2026-01-01', to: '2026-05-01'});
+            const random_start_loan = faker.date.between({from: '2026-04-01', to: '2026-06-01'});
+            const random_return_loan = faker.date.between({from: '2026-04-01', to: '2026-06-01'});
             const return_numbers = random_start_loan < random_return_loan ? random_return_loan : null;
             return {
                 user_id: user_list[faker.number.int({min: 0, max: user_list.length-1})],
-                copy_id: i, //copy_list[faker.number.int({min: 0, max: copy_list.length-1})],
+                copy_id: i,
                 start_date: random_start_loan,
                 return_date: return_numbers,
             };
