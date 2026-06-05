@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Post,
-  Patch,
   Query,
   Param,
   Body,
@@ -41,20 +40,6 @@ export class BookController {
       throw new ForbiddenException('Tylko administrator może dodawać książki');
     }
     return this.bookService.addBook(dto);
-  }
-
-  @Patch('remove')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: 'Usunięcie książki',
-    description: 'Tylko administrator może usuwać książki.',
-  })
-  async removeBook(@Body('id') id: number, @Req() req: Request) {
-    const payload = await this.authService.verifyToken(req);
-    if (!payload.is_Admin) {
-      throw new ForbiddenException('Tylko administrator może usuwać książki');
-    }
-    return this.bookService.removeBook(id);
   }
 
   @Get()

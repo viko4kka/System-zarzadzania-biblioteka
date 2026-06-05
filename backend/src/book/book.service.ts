@@ -37,11 +37,9 @@ export class BookService {
       .catch(() => {
         throw new InternalServerErrorException('Błąd bazy danych');
       });
-      if (dto.ISBN && dto.ISBN.length !== 13)
-        throw new BadRequestException (
-          'ISBN musi mieć 13 znaków',
-      );    
-      if (existing) {
+    if (dto.ISBN && dto.ISBN.length !== 13)
+      throw new BadRequestException('ISBN musi mieć 13 znaków');
+    if (existing) {
       throw new ConflictException(
         'Książka o takim tytule lub ISBN już istnieje',
       );
@@ -75,11 +73,6 @@ export class BookService {
       .catch(() => {
         throw new InternalServerErrorException('Nie udało się dodać książki');
       });
-  }
-
-  async removeBook(bookId: number) {
-    await this.findBookOrThrow(bookId);
-    return { message: 'Dummy function' };
   }
 
   async searchBooks(page: number, limit: number, search?: string) {
@@ -168,10 +161,10 @@ export class BookService {
           ISBN: true,
           publisher_id: true,
           _count: {
-            select: { copies:
-              {
-                where:{is_actual:true}
-              }
+            select: {
+              copies: {
+                where: { is_actual: true },
+              },
             },
           },
         },
@@ -184,16 +177,18 @@ export class BookService {
       throw new NotFoundException(`Książka o id ${bookId} nie istnieje`);
 
     const availableCopies = await this.prisma.copy
-    .count({
-      where: {
-        book_id: bookId,
-        is_actual: true,
-        loans: {
-          none: { return_date: null },
+      .count({
+        where: {
+          book_id: bookId,
+          is_actual: true,
+          loans: {
+            none: { return_date: null },
+          },
         },
-      },
-    })
-  .catch(() => { throw new InternalServerErrorException('Błąd bazy danych'); });
+      })
+      .catch(() => {
+        throw new InternalServerErrorException('Błąd bazy danych');
+      });
 
     return {
       id_book: book.id_book,
