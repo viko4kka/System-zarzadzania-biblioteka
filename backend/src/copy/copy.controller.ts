@@ -11,6 +11,7 @@ import {
 import { AuthService } from 'src/auth/auth.service';
 import { CopyService } from './copy.service';
 import type { Request } from 'express';
+import { ApiQuery } from '@nestjs/swagger';
 
 @Controller('copy')
 export class CopyController {
@@ -20,6 +21,18 @@ export class CopyController {
   ) {}
 
   @Get(':id_book')
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Numer strony (domyślnie 1)',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Liczba wyników na stronę (domyślnie 10)',
+  })
   async getBookCopies(
     @Req() req: Request,
     @Param('id_book') id: string,
@@ -32,7 +45,7 @@ export class CopyController {
     }
 
     const pageNumber = page ? parseInt(page) : 1;
-    const limitNumber = limit ? parseInt(limit) : 100;
+    const limitNumber = limit ? parseInt(limit) : 10;
     return this.copyService.getBookCopies(
       parseInt(id),
       pageNumber,
