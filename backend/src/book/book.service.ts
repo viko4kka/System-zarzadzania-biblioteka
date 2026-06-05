@@ -3,6 +3,7 @@ import {
   NotFoundException,
   InternalServerErrorException,
   ConflictException,
+  BadRequestException
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { AddBookDto } from './dto/addBook.dto';
@@ -36,7 +37,11 @@ export class BookService {
       .catch(() => {
         throw new InternalServerErrorException('Błąd bazy danych');
       });
-
+    
+    if (dto.ISBN && dto.ISBN.length !== 13)
+      throw new BadRequestException (
+        'ISBN musi mieć 13 znaków',
+      );
     if (existing) {
       throw new ConflictException(
         'Książka o takim tytule lub ISBN już istnieje',
