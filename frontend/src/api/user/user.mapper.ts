@@ -37,11 +37,15 @@ export const mapBanUnbanResponse = (dto: ApiBanUnbanResponseDto): {
 const mapUser = (dto: UserDto): User => ({
     id: dto.id,
     name: dto.name,
-    lastname: dto.lastname
+    lastname: dto.lastname,
+    mail: dto.mail,
+    is_Admin: dto.is_Admin,
+    is_Banned:dto.is_Banned,
+    is_Removed: dto.is_Removed
 });
 
 export const mapUsersListResponse = (dto: UsersListResponseDto): { users: User[] } => ({
-    users: dto.users.map(mapUser),
+    users: dto.data.map(mapUser),
 });
 
 const mapBorrowedBook = (dto: BorrowedBookDto): BorrowedBook => ({
