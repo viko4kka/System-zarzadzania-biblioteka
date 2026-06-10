@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CustomPagination from "../../../ui/CustomPagination";
 import { Button } from "../../../ui/Button";
 import { MdMoreVert } from "react-icons/md";
-import { Menu, MenuItem, MenuButton } from "@szhsin/react-menu";
+import { Menu, MenuItem } from "@szhsin/react-menu";
 import "@szhsin/react-menu/dist/index.css";
 import "@szhsin/react-menu/dist/transitions/zoom.css";
 import { useUsersList } from "../../../hooks/user/use-users-list";
@@ -10,13 +10,7 @@ import { usePagination } from "../../../hooks/pagination/use-pagination";
 import { useLoggedInUserData } from "../../../hooks/user/useLoggedInUserData";
 import { useMakeAdmin } from "../../../hooks/user/use-make-admin";
 import Badge from "../../../ui/Badge";
-import {
-  FaLock,
-  FaLockOpen,
-  FaUnlock,
-  FaTrashAlt,
-  FaSearch,
-} from "react-icons/fa";
+import { FaLock, FaUnlock, FaTrashAlt, FaSearch } from "react-icons/fa";
 import { useBan } from "../../../hooks/user/use-ban";
 import { useUnban } from "../../../hooks/user/use-unban";
 import { useRemoveUser } from "../../../hooks/auth/useRemoveUser";
@@ -84,7 +78,7 @@ function AUsers() {
     mail: "",
   });
 
-  const { user, isLoading, isUnauthorized } = useLoggedInUserData();
+  const { user } = useLoggedInUserData();
 
   const pagination = usePagination();
 

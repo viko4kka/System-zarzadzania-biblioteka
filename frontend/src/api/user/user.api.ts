@@ -1,7 +1,6 @@
 import { api } from "../api";
 import type { 
     BanUnbanResponseDto,
-    ApiMakeAdminResponseDto, 
     MakeAdminResponseDto, 
     User, 
     UserData, 
