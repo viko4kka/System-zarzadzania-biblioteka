@@ -1,9 +1,10 @@
 export interface AddBookDto {
     title: string;
     year: number;
-    cover: string;
-    publisher_id: string;
-    ISBN: string;
+    publisher_name: string;
+    authors: AddAuthorDto[];
+    cover?: string;
+    ISBN?: string;  
 }
 
 export interface RemoveBookDto {
@@ -30,6 +31,7 @@ export interface RemoveCopyDto {
 
 export interface AddAuthorDto {
     author_name: string;
+    author_lastname: string;
 }
 
 //Response (only data)
