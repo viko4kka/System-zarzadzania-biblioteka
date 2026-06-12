@@ -40,7 +40,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
         <Sidebar isLoggedIn={isLoggedIn} isAdmin={isAdmin} />
       </Menu>
       <div
-        className="flex h-screen max-h-screen min-h-screen w-screen max-w-screen overflow-y-hidden bg-gray-50"
+        className="flex h-screen max-h-screen min-h-screen w-screen max-w-screen overflow-hidden bg-gray-50"
         id="page-wrap"
       >
         <button
@@ -59,8 +59,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
             isLoggedIn={isLoggedIn}
             isAdmin={isAdmin}
           >
-            <main className="h-full w-full flex-1 overflow-x-hidden overflow-y-auto p-4 pt-16 lg:p-16 lg:pt-24">
-              <div className="">{children}</div>
+            <main className="h-full w-full flex-1 overflow-auto p-4 pt-16 lg:p-16 lg:pt-24">
+              <div className="w-full min-w-full">{children}</div>
             </main>
           </Header>
         </div>
