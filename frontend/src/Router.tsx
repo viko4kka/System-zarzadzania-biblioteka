@@ -21,6 +21,7 @@ import MainLayout from "./layouts/MainLayout";
 import HomePage from "./pages/home/page"; 
 import ProtectedRoute from "./ProtectedRoute"; 
 import Forbidden from "./pages/Forbidden"; 
+import NotFoundPage from "./pages/public/notFound/page";
 
 const router = createBrowserRouter([
   {
@@ -126,6 +127,10 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+        path: '*',
+    element: <NotFoundPage />
+  }
 ]);
 
 export function Router() {
