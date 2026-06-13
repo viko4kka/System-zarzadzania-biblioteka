@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, NotFoundException, InternalServerErrorException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 
 @Injectable()
@@ -73,6 +73,32 @@ export class CopyService {
   }
 
   async addCopy(id_book: number) {
+    const book = await this.prisma.book
+      .findUnique({
+        where: { id_book: id_book },
+        select: {
+          id_book: true,
+          title: true,
+          year: true,
+          cover: true,
+          ISBN: true,
+          publisher_id: true,
+          _count: {
+            select: {
+              copies: {
+                where: { is_actual: true },
+              },
+            },
+          },
+        },
+      }).catch(() => {
+        throw new InternalServerErrorException('Błąd bazy danych');
+      });
+
+    if (!book)
+      throw new NotFoundException(`Książka o id ${id_book} nie istnieje`);
+
+
     const newCopy = await this.prisma.copy.create({
       data: {
         book_id: id_book,
