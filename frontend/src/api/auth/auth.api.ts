@@ -39,11 +39,23 @@ export const authApi = {
     return response;
   },
 
-  removeUser: async (id: string, data: RemoveUserDto): Promise<string> => {
-    const response = await api.patch<ApiRemoveUserResponseDto>(
+  removeUser: async (id: string | null, data: RemoveUserDto | null): Promise<string> => {
+    if(id){
+   //console.log('remove id: ', id)
+       const response = await api.patch<ApiRemoveUserResponseDto>(
       `${baseURL}/removeUser/${id}`,
-      data,
     );
+    //console.log('remove: ', response)
     return response.message;
+   }
+   
+    //console.log('remove: ', response)
+     const response = await api.patch<ApiRemoveUserResponseDto>(
+      `${baseURL}/removeUser`,
+      data
+    );
+    //console.log('remove: ', response)
+    return response.message;
+
   },
 };
