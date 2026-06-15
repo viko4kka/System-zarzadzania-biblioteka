@@ -109,4 +109,34 @@ export class LoanService {
         throw new InternalServerErrorException('Błąd bazy danych');
       });
   }
+
+  async getUserActiveLoans(userId: number) {
+    return await this.prisma.loan
+      .findMany({
+        where: { user_id: userId, return_date: null },
+        orderBy: { start_date: 'desc' },
+        select: {
+          id_loan: true,
+          copy_id: true,
+          start_date: true,
+          return_date: true,
+          copy: {
+            select: {
+              id_copy: true,
+              book: {
+                select: {
+                  id_book: true,
+                  title: true,
+                  cover: true,
+                  ISBN: true,
+                },
+              },
+            },
+          },
+        },
+      })
+      .catch(() => {
+        throw new InternalServerErrorException('Błąd bazy danych');
+      });
+  }
 }

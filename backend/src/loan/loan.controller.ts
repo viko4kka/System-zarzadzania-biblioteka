@@ -73,6 +73,20 @@ export class LoanController {
     return await this.loanService.getUserLoans(payload.id);
   }
 
+  @Get('ActiveLoans')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Lista niezwróconych kopii książek przez użytkownika',
+    description: 'Zwraca wszystkie aktywne wypożyczenia zalogowanego użytkownika.',
+  })
+  async getUserActiveLoans(@Req() req: Request) {
+    const payload = await this.authService.verifyToken(req);
+
+    return await this.loanService.getUserActiveLoans(payload.id);
+  }
+
+
+
   @Get('loans/:user_id')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
