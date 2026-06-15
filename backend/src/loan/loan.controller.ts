@@ -9,8 +9,9 @@ import {
   Post,
   Req,
   ForbiddenException,
+  Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags, ApiQuery } from '@nestjs/swagger';
 import type { Request } from 'express';
 import { AuthService } from '../auth/auth.service';
 import { LoanService } from './loan.service';
@@ -76,13 +77,31 @@ export class LoanController {
   @Get('ActiveLoans')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Lista niezwróconych kopii książek przez użytkownika',
+    summary: 'Lista wypożyczeń użytkownika, które nie zostały jeszcze zwrócone',
     description: 'Zwraca wszystkie aktywne wypożyczenia zalogowanego użytkownika.',
   })
-  async getUserActiveLoans(@Req() req: Request) {
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Numer strony (domyślnie 1)',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Liczba wyników na stronę (domyślnie 10)',
+  })
+  async getUserActiveLoans(
+    @Req() req: Request,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
     const payload = await this.authService.verifyToken(req);
 
-    return await this.loanService.getUserActiveLoans(payload.id);
+    const pageNum = page ? parseInt(page) : 1;
+    const limitNum = limit ? parseInt(limit) : 10;
+    return await this.loanService.getUserActiveLoans(payload.id, pageNum, limitNum);
   }
 
 

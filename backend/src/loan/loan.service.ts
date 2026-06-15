@@ -110,11 +110,18 @@ export class LoanService {
       });
   }
 
-  async getUserActiveLoans(userId: number) {
-    return await this.prisma.loan
-      .findMany({
+  async getUserActiveLoans(userId: number, page: number, limit: number) {
+    // Walidacja parametrów
+    const validPage = Math.max(1, page);
+    const validLimit = Math.min(Math.max(1, limit), 100); // maksymalnie 100 wyników
+    const skip = (validPage - 1) * validLimit;
+
+    //
+    const [loans, total] = await Promise.all([
+      this.prisma.loan.findMany({
         where: { user_id: userId, return_date: null },
-        orderBy: { start_date: 'desc' },
+        skip: skip,
+        take: validLimit,
         select: {
           id_loan: true,
           copy_id: true,
@@ -134,9 +141,31 @@ export class LoanService {
             },
           },
         },
-      })
-      .catch(() => {
+        orderBy: {
+          start_date: 'desc',
+        },
+      }),
+      this.prisma.loan.count({
+        where: {
+          user_id: userId,
+          return_date: null,
+        }
+      }),
+    ]).catch(() => {
         throw new InternalServerErrorException('Błąd bazy danych');
-      });
+      });;
+
+    // Zwracamy dane z metadanymi paginacji
+    return {
+      data: loans,
+      meta: {
+        page: validPage,
+        limit: validLimit,
+        total: total,
+        totalPages: Math.ceil(total / validLimit),
+      },
+    };
+
+
   }
 }
