@@ -92,13 +92,13 @@ export class LoanService {
           return_date: true,
           copy: {
             select: {
-              id_copy: true,
               book: {
                 select: {
                   id_book: true,
                   title: true,
                   cover: true,
                   ISBN: true,
+                  authors: true,
                 },
               },
             },
@@ -122,13 +122,13 @@ export class LoanService {
           return_date: true,
           copy: {
             select: {
-              id_copy: true,
               book: {
                 select: {
                   id_book: true,
                   title: true,
                   cover: true,
                   ISBN: true,
+                  authors: true,
                 },
               },
             },
