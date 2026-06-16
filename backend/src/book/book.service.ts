@@ -251,4 +251,33 @@ export class BookService {
 
     throw new InternalServerErrorException('Nie udało się dodać wydawnictwa');
   }
+
+  async updateBook(bookId: number, dto: {
+  title?: string;
+  year?: number;
+  cover?: string;
+  publisher_id?: number;
+  ISBN?: string;
+}) {
+  if (dto.ISBN && dto.ISBN.length !== 13) {
+    throw new BadRequestException('ISBN musi mieć dokładnie 13 znaków');
+  }
+
+  await this.findBookOrThrow(bookId);
+
+  return this.prisma.book
+    .update({
+      where: { id_book: bookId },
+      data: dto,
+      select: {
+        id_book: true,
+        title: true,
+        year: true,
+        cover: true,
+        ISBN: true,
+        publisher_id: true,
+      },
+    })
+    .catch(() => { throw new InternalServerErrorException('Nie udało się zaktualizować książki'); });
+}
 }
