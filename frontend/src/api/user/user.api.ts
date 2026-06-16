@@ -19,7 +19,6 @@ export const userApi = {
         message: string  
     }> => {
         const response = await api.patch<MakeAdminResponseDto>(`${baseURL}/${id}/makeAdmin`);
-           console.log('ma;',response)
         return mapMakeAdminResponse({data: response, message: ''});
     },
 
@@ -42,7 +41,6 @@ export const userApi = {
 
 usersList: async (params: UsersListParams): Promise<{ users: User[], meta: UsersMeta }> => {
     const response = await api.get<UsersListResponseDto>(`${baseURL}/`, params);
-    console.log("response:", response);
     return {
         ...mapUsersListResponse(response),
         meta: response.meta,

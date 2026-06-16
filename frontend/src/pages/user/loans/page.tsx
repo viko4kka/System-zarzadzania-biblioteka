@@ -2,206 +2,42 @@ import { useState } from "react";
 import CustomPagination from "../../../ui/CustomPagination";
 import { Button } from "../../../ui/Button";
 import CustomModal from "../../../ui/CustomModal";
-
-const mockupData = [
-  {
-    title: "Matematyka dyskretna",
-    author: " Kenneth A. Ross",
-    loanDate: "18-03-2026",
-    returnDate: "18-09-2026",
-    isCurrentlyLoaned: false,
-  },
-  {
-    title: "Python od podstaw",
-    author: " Marcin Moskała",
-    loanDate: "23-12-2025",
-    returnDate: "23-07-2026",
-    isCurrentlyLoaned: false,
-  },
-  {
-    title: "Programowanie Współbieżne i rozproszone",
-    author: " Weiss Zbigniew",
-    loanDate: "04-04-2026",
-    returnDate: "04-11-2026",
-    isCurrentlyLoaned: true,
-  },
-  {
-    title: "Matematyka dyskretna",
-    author: " Kenneth A. Ross",
-    loanDate: "18-03-2026",
-    returnDate: "18-09-2026",
-    isCurrentlyLoaned: false,
-  },
-  {
-    title: "Python od podstaw",
-    author: " Marcin Moskała",
-    loanDate: "23-12-2025",
-    returnDate: "23-07-2026",
-    isCurrentlyLoaned: true,
-  },
-  {
-    title: "Programowanie Współbieżne i rozproszone",
-    author: " Weiss Zbigniew",
-    loanDate: "04-04-2026",
-    returnDate: "04-11-2026",
-    isCurrentlyLoaned: false,
-  },
-  {
-    title: "Matematyka dyskretna",
-    author: " Kenneth A. Ross",
-    loanDate: "18-03-2026",
-    returnDate: "18-09-2026",
-    isCurrentlyLoaned: true,
-  },
-  {
-    title: "Python od podstaw",
-    author: " Marcin Moskała",
-    loanDate: "23-12-2025",
-    returnDate: "23-07-2026",
-    isCurrentlyLoaned: true,
-  },
-  {
-    title:
-      "Programowanie Współbieżne i rozproszoneeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-    author: " Weiss Zbigniew",
-    loanDate: "04-04-2026",
-    returnDate: "04-11-2026",
-    isCurrentlyLoaned: false,
-  },
-  {
-    title: "Matematyka dyskretna",
-    author: " Kenneth A. Ross",
-    loanDate: "18-03-2026",
-    returnDate: "18-09-2026",
-    isCurrentlyLoaned: true,
-  },
-  {
-    title: "Python od podstaw",
-    author: " Marcin Moskała",
-    loanDate: "23-12-2025",
-    returnDate: "23-07-2026",
-    isCurrentlyLoaned: false,
-  },
-  {
-    title: "Programowanie Współbieżne i rozproszone",
-    author: " Weiss Zbigniew",
-    loanDate: "04-04-2026",
-    returnDate: "04-11-2026",
-    isCurrentlyLoaned: false,
-  },
-  {
-    title: "Matematyka dyskretna",
-    author: " Kenneth A. Ross",
-    loanDate: "18-03-2026",
-    returnDate: "18-09-2026",
-    isCurrentlyLoaned: false,
-  },
-  {
-    title: "Python od podstaw",
-    author: " Marcin Moskała",
-    loanDate: "23-12-2025",
-    returnDate: "23-07-2026",
-    isCurrentlyLoaned: false,
-  },
-  {
-    title: "Programowanie Współbieżne i rozproszone",
-    author: " Weiss Zbigniew",
-    loanDate: "04-04-2026",
-    returnDate: "04-11-2026",
-    isCurrentlyLoaned: true,
-  },
-  {
-    title: "Matematyka dyskretna",
-    author: " Kenneth A. Ross",
-    loanDate: "18-03-2026",
-    returnDate: "18-09-2026",
-    isCurrentlyLoaned: false,
-  },
-  {
-    title: "Python od podstaw",
-    author: " Marcin Moskała",
-    loanDate: "23-12-2025",
-    returnDate: "23-07-2026",
-    isCurrentlyLoaned: true,
-  },
-  {
-    title: "Programowanie Współbieżne i rozproszone",
-    author: " Weiss Zbigniew",
-    loanDate: "04-04-2026",
-    returnDate: "04-11-2026",
-    isCurrentlyLoaned: false,
-  },
-  {
-    title: "Matematyka dyskretna",
-    author: " Kenneth A. Ross",
-    loanDate: "18-03-2026",
-    returnDate: "18-09-2026",
-    isCurrentlyLoaned: true,
-  },
-  {
-    title: "Python od podstaw",
-    author: " Marcin Moskała",
-    loanDate: "23-12-2025",
-    returnDate: "23-07-2026",
-    isCurrentlyLoaned: true,
-  },
-  {
-    title:
-      "Programowanie Współbieżne i rozproszoneeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee eee",
-    author: " Weiss Zbigniew",
-    loanDate: "04-04-2026",
-    returnDate: "04-11-2026",
-    isCurrentlyLoaned: true,
-  },
-  {
-    title: "Matematyka dyskretna",
-    author: " Kenneth A. Ross",
-    loanDate: "18-03-2026",
-    returnDate: "18-09-2026",
-    isCurrentlyLoaned: true,
-  },
-  {
-    title: "Python od podstaw",
-    author: " Marcin Moskała",
-    loanDate: "23-12-2025",
-    returnDate: "23-07-2026",
-    isCurrentlyLoaned: false,
-  },
-  {
-    title: "Ostatnia na liście",
-    author: " Weiss Zbigniew",
-    loanDate: "04-04-2026",
-    returnDate: "04-11-2026",
-    isCurrentlyLoaned: false,
-  },
-];
+import { usePagination } from "../../../hooks/pagination/use-pagination";
+import { useActiveLoans } from "../../../hooks/loan/use-active-loans-data";
+import { useReturnBook } from "../../../hooks/loan/use-return-book";
+import type { LoansAuthorDto } from "../../../api/loan/loan.types";
 
 function ULoans() {
   const [isOpened, setIsOpened] = useState<boolean>(false);
-  const [modalData, setModalData] = useState<{ title: string; id: number }>({
+  const [modalData, setModalData] = useState<{ title: string; id: string }>({
     title: "",
-    id: 0,
+    id: "",
   });
 
-  const limitPerPage = 10;
-  const [pageData, setPageData] = useState(mockupData.slice(0, limitPerPage));
-  const totalNumberOfItems = mockupData.length;
+  const pagination = usePagination();
+  const { page, limit } = pagination;
 
-  const [totalBooksBorrowed, setTotalBooksBorrowed] = useState<number>(56);
+  const activeLoansQuery = useActiveLoans({
+    limit: limit,
+    page: page,
+  });
+  const returnBook = useReturnBook();
 
-  const onPageChange = async (newPage: number) => {
-    //TODO zapytanie ze względu na newPage
-    const newData = mockupData.slice(
-      (newPage - 1) * limitPerPage,
-      newPage * limitPerPage,
-    );
-    setPageData(newData);
+  const formatDate = (date: Date) => {
+    const d = String(date.getDate()).padStart(2, "0");
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const y = date.getFullYear();
 
-    //TODO ustawienie w jakiś sposób liczby wypożyczonych ksiażek
-    setTotalBooksBorrowed(49);
+    return `${d}-${m}-${y}`;
+  };
 
-    //TODO zwrocenie aktualej całkowitej ilości elementow
-    return totalNumberOfItems;
+  const formatAuthors = (authors: LoansAuthorDto[]): string => {
+    const authorsStrs =
+      authors.length > 0
+        ? authors.map((item) => `${item.author_name} ${item.author_lastname}`)
+        : [""];
+
+    return authorsStrs.join(", ");
   };
 
   const commonCellStyle = "border border-solid border-gray-300 p-4";
@@ -216,31 +52,33 @@ function ULoans() {
         }}
       >
         <CustomModal.Content className="m-5 max-w-96 min-w-0 overflow-hidden text-center">
-          <p>Are you sure you want to return this book?</p>
-          <p className="text-main-navy-blue mt-5 line-clamp-3 font-bold wrap-break-word">
-            "{modalData.title}"
+          <p className="text-main-navy-blue">
+            Are you sure you want to return this book?
+          </p>
+          <p className="text-main-blue mt-5 line-clamp-5 font-bold wrap-break-word">
+            {modalData.title}
           </p>
         </CustomModal.Content>
 
         <CustomModal.Footer>
           <Button
-            className="mx-5 min-w-32 p-2 px-5"
             intent="third"
+            className="mx-2 h-10 w-24 p-0 lg:mx-8 lg:w-32"
             onClick={() => {
               setIsOpened(false);
             }}
           >
-            No
+            Cancel
           </Button>
           <Button
-            className="mx-5 min-w-32 p-2 px-5"
             intent="secondary"
+            className="mx-2 h-10 w-24 p-0 lg:mx-8 lg:w-32"
             onClick={() => {
-              //TODO żadanie zwrotu
+              returnBook.mutate(modalData.id);
               setIsOpened(false);
             }}
           >
-            Return
+            Yes
           </Button>
         </CustomModal.Footer>
       </CustomModal>
@@ -248,66 +86,82 @@ function ULoans() {
       <div className="mt-12">
         <h1 className="text-main-navy-blue my-5 text-2xl">My loans</h1>
         <h2 className="text-main-navy-blue-hover text-lg">
-          You have {totalBooksBorrowed} books borrowed
+          You have{" "}
+          {activeLoansQuery.isSuccess
+            ? activeLoansQuery.data.data.length.toString() + " "
+            : " -- "}{" "}
+          books borrowed
         </h2>
 
         <div className="w-full overflow-x-auto">
           <table className="my-8 w-full min-w-225 table-auto rounded-xl border border-solid border-gray-300">
             <thead className="bg-gray-100 font-light text-gray-600">
               <tr>
-                <th className={headerCellStyle}>Book</th>
-                <th className={headerCellStyle}>Loan date</th>
-                <th className={headerCellStyle}>Return date</th>
-                <th className={headerCellStyle}>Actions</th>
+                <th className={`${headerCellStyle}`}>Book</th>
+                <th className={`${headerCellStyle} w-44`}>Loan date</th>
+
+                <th className={`${headerCellStyle} w-24`}></th>
               </tr>
             </thead>
 
             <tbody className="bg-white">
-              {pageData ? (
-                pageData.map((item, id) => (
-                  <tr key={id}>
-                    <td className={`${commonCellStyle} max-w-120`}>
-                      <div className="text-main-navy-blue truncate text-balance">
-                        {item.title}
-                      </div>
-                      <span className="truncate text-sm font-light text-balance text-gray-500">
-                        {item.author}
-                      </span>
-                    </td>
-                    <td className={`${commonCellStyle} min-w-32 text-center`}>
-                      {item.loanDate}
-                    </td>
-                    <td className={`${commonCellStyle} min-w-32 text-center`}>
-                      {item.returnDate}
-                    </td>
-                    <td className={`${commonCellStyle} min-w-64 text-center`}>
-                      {item.isCurrentlyLoaned ? (
+              {
+                activeLoansQuery.isSuccess &&
+                  activeLoansQuery.data.data.length > 0 &&
+                  activeLoansQuery.data.data.map((item, id) => (
+                    <tr key={id}>
+                      <td className={`${commonCellStyle} max-w-120`}>
+                        <div className="text-main-navy-blue truncate text-balance">
+                          {item.copy.book.title}
+                        </div>
+                        <span className="truncate text-sm font-light text-balance text-gray-500">
+                          {formatAuthors(item.copy.book.authors)}
+                        </span>
+                      </td>
+                      <td className={`${commonCellStyle} min-w-32 text-center`}>
+                        {formatDate(new Date(item.start_date))}
+                      </td>
+                      <td className={`${commonCellStyle} min-w-64 text-center`}>
                         <Button
                           intent="secondary"
                           className="p-2 px-5"
                           onClick={() => {
-                            setModalData({ title: item.title, id });
+                            setModalData({
+                              title: item.copy.book.title,
+                              id: item.copy_id,
+                            });
                             setIsOpened(true);
                           }}
                         >
                           Return book
                         </Button>
-                      ) : (
-                        <span>The book was returned</span>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <span> no data</span>
-              )}
+                      </td>
+                    </tr>
+                  )) //: (
+                //   <span> You don't have any loans</span>
+                // )
+                // : (
+                //   <span> No data</span>
+                // )
+              }
             </tbody>
           </table>
+          {activeLoansQuery.isSuccess ? (
+            activeLoansQuery.data.data.length <= 0 ? (
+              <div className="my-24 w-full text-center">
+                {" "}
+                You don't have any loans
+              </div>
+            ) : (
+              <></>
+            )
+          ) : (
+            <div className="my-24 w-full text-center"> No data</div>
+          )}
         </div>
         <CustomPagination
-          itemsPerPage={limitPerPage}
-          initalTotalNumberOfItems={totalNumberOfItems}
-          onPageChange={onPageChange}
+          totalPages={activeLoansQuery.data?.meta.totalPages}
+          pagination={pagination}
         />
       </div>
     </>

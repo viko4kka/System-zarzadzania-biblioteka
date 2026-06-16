@@ -1,7 +1,7 @@
+import ULoans from "../../user/loans/page";
+
 function ALoans() {
-    return (
-        <h1>Admin Loans</h1>
-    );
+  return <ULoans />;
 }
 
 export default ALoans;
