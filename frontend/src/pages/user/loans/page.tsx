@@ -114,9 +114,9 @@ function ULoans() {
                         <div className="text-main-navy-blue truncate text-balance">
                           {item.copy.book.title}
                         </div>
-                        <span className="truncate text-sm font-light text-balance text-gray-500">
-                          {formatAuthors(item.copy.book.authors)}
-                        </span>
+                        <div className="truncate text-sm font-light text-balance text-gray-500">
+                          {formatAuthors(item.copy.book.authors)}{" "}
+                        </div>
                       </td>
                       <td className={`${commonCellStyle} min-w-32 text-center`}>
                         {formatDate(new Date(item.start_date))}
