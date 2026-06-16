@@ -92,13 +92,13 @@ export class LoanService {
           return_date: true,
           copy: {
             select: {
-              id_copy: true,
               book: {
                 select: {
                   id_book: true,
                   title: true,
                   cover: true,
                   ISBN: true,
+                  authors: true,
                 },
               },
             },
@@ -108,5 +108,64 @@ export class LoanService {
       .catch(() => {
         throw new InternalServerErrorException('Błąd bazy danych');
       });
+  }
+
+  async getUserActiveLoans(userId: number, page: number, limit: number) {
+    // Walidacja parametrów
+    const validPage = Math.max(1, page);
+    const validLimit = Math.min(Math.max(1, limit), 100); // maksymalnie 100 wyników
+    const skip = (validPage - 1) * validLimit;
+
+    //
+    const [loans, total] = await Promise.all([
+      this.prisma.loan.findMany({
+        where: { user_id: userId, return_date: null },
+        skip: skip,
+        take: validLimit,
+        select: {
+          id_loan: true,
+          copy_id: true,
+          start_date: true,
+          return_date: true,
+          copy: {
+            select: {
+              book: {
+                select: {
+                  id_book: true,
+                  title: true,
+                  cover: true,
+                  ISBN: true,
+                  authors: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          start_date: 'desc',
+        },
+      }),
+      this.prisma.loan.count({
+        where: {
+          user_id: userId,
+          return_date: null,
+        }
+      }),
+    ]).catch(() => {
+        throw new InternalServerErrorException('Błąd bazy danych');
+      });;
+
+    // Zwracamy dane z metadanymi paginacji
+    return {
+      data: loans,
+      meta: {
+        page: validPage,
+        limit: validLimit,
+        total: total,
+        totalPages: Math.ceil(total / validLimit),
+      },
+    };
+
+
   }
 }
