@@ -115,8 +115,10 @@ function AUsers() {
   const remove = useRemoveUser();
   const makeAdmin = useMakeAdmin();
 
-  const commonCellStyle = "border border-solid border-gray-300 p-4";
-  const headerCellStyle = "border border-solid border-gray-300 p-3 font-normal";
+  const commonCellStyle =
+    "border border-solid border-gray-300 xl:p-4 p-2 xl:text-base text-xs";
+  const headerCellStyle =
+    "border border-solid border-gray-300 xl:p-3 p-2 font-normal xl:text-base text-xs";
 
   const UserMangenemtMenu = ({ item }: { item: User }) => (
     <Menu
@@ -306,14 +308,16 @@ function AUsers() {
       {ConfirmDeleteUserModal}
       {ConfirmMakeAdminUserModal}
       <div className="mt-12">
-        <h1 className="text-main-navy-blue my-5 text-2xl">Users overview</h1>
+        <h1 className="text-main-navy-blue my-2 text-lg xl:my-5 xl:text-2xl">
+          Users overview
+        </h1>
         <div className="px- flex items-center rounded-xl border border-gray-300 bg-white px-2 py-0 lg:px-6 lg:py-2">
           <span className="text-lg text-gray-400">
             <FaSearch />
           </span>
           <input
             placeholder="Search users"
-            className="ml-2lg:ml-8 w-full bg-white p-2 focus:outline-none"
+            className="ml-2 w-full bg-white p-0.5 text-xs focus:outline-none xl:ml-8 xl:p-2 xl:text-base"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -323,8 +327,8 @@ function AUsers() {
         </div>
         <div className="w-full max-w-full min-w-0 overflow-x-auto">
           <table
-            style={{ minWidth: "900px" }}
-            className="my-8 hidden w-full table-auto rounded-xl border border-solid border-gray-300 md:table"
+            style={{ minWidth: "490px" }}
+            className="my-4 hidden w-full table-auto rounded-xl border border-solid border-gray-300 md:table xl:my-8"
           >
             <thead className="bg-gray-100 font-light text-gray-600">
               <tr>
@@ -348,10 +352,14 @@ function AUsers() {
                         </span>
                       </div>
                     </td>
-                    <td className={`${commonCellStyle} min-w-32 text-center`}>
+                    <td
+                      className={`${commonCellStyle} text-center xl:min-w-32`}
+                    >
                       {item.mail}
                     </td>
-                    <td className={`${commonCellStyle} w-48 text-center`}>
+                    <td
+                      className={`${commonCellStyle} w-36 text-center xl:w-48`}
+                    >
                       {item.is_Admin ? <AdminBadge /> : <UserBadge />}
                     </td>
                     <td className={`${commonCellStyle} w-40 text-center`}>
@@ -379,40 +387,40 @@ function AUsers() {
               users.data.users.map((item, id) => (
                 <div
                   key={id}
-                  className="my-5 flex justify-between rounded-xl border border-gray-200 bg-white p-5 shadow-md"
+                  className="my-3 flex justify-between rounded-xl border border-gray-200 bg-white p-4 shadow-md xl:my-5 xl:p-5"
                 >
                   <div className="w-full">
                     <div className="text-main-navy-blue flex w-full items-center">
                       <div className="min-w-0 flex-1">
-                        <div className="truncate text-lg">
+                        <div className="truncate text-base xl:text-lg">
                           {`${item.name} ${item.lastname}`}{" "}
                         </div>
                       </div>
-
                       {user?.mail === item.mail && (
-                        <span className="text-main-blue ml-2 shrink-0">
+                        <span className="text-main-blue ml-1 shrink-0 text-sm xl:ml-2 xl:text-base">
                           (You)
                         </span>
                       )}
                     </div>
-                    <div className="mb-4 block w-full min-w-0 truncate text-sm text-gray-600">
+                    <div className="mb-2 block w-full min-w-0 truncate text-xs text-gray-600 xl:mb-4 xl:text-sm">
                       {item.mail}
                     </div>
-
-                    <div className="text-main-navy-blueflex my-3 items-center">
-                      <span className="text-main-navy-blue mr-2 text-sm">
+                    <div className="text-main-navy-blue my-1.5 flex items-center xl:my-3">
+                      <span className="text-main-navy-blue mr-1 text-xs xl:mr-2 xl:text-sm">
                         Role:
                       </span>
                       {item.is_Admin ? (
-                        <span className="text-font-highlight text-sm">
+                        <span className="text-font-highlight text-xs xl:text-sm">
                           Administrator
                         </span>
                       ) : (
-                        <span className="text-main-blue text-sm">User</span>
+                        <span className="text-main-blue text-xs xl:text-sm">
+                          User
+                        </span>
                       )}
                     </div>
-                    <div className="text-main-navy-blue flex items-center text-sm">
-                      <span className="mr-2">Status:</span>
+                    <div className="text-main-navy-blue flex items-center text-xs xl:text-sm">
+                      <span className="mr-1 xl:mr-2">Status:</span>
                       {item.is_Removed ? (
                         <DeletedBadge />
                       ) : item.is_Banned ? (
@@ -428,7 +436,7 @@ function AUsers() {
                 </div>
               ))
             ) : (
-              <span> No data</span>
+              <span className="text-sm xl:text-base"> No data</span>
             )}
           </div>
         </div>
