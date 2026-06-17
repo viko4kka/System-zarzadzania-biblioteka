@@ -160,6 +160,19 @@ export class BookService {
           cover: true,
           ISBN: true,
           publisher_id: true,
+          publisher: {
+            select: {
+              id_publisher: true,
+              publisher_name: true,
+            },
+          },
+          authors: {
+            select: {
+              id_author: true,
+              author_name: true,
+              author_lastname: true,
+            },
+          },
           _count: {
             select: {
               copies: {
@@ -197,6 +210,8 @@ export class BookService {
       cover: book.cover,
       ISBN: book.ISBN,
       publisher_id: book.publisher_id,
+      publisher: book.publisher,
+      authors: book.authors,
       totalCopies: book._count.copies,
       availableCopies,
     };
