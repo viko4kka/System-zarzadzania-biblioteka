@@ -58,4 +58,19 @@ usersList: async (params: UsersListParams): Promise<{ users: User[], meta: Users
         const response = await api.get<UserDataResponseDto>(`${baseURL}`);
         return mapUserDataResponse(response);
     },
+    updateUser: async (
+        newName: string,
+        newLastname: string,
+        oldPassword: string,
+        newPassword: string
+    ): Promise<UserData> => {
+        const response = await api.patch<UserDataResponseDto>(`${baseURL}/updateUser`, {
+            name: newName,
+            lastname: newLastname,
+            oldpassword: oldPassword,
+            newpassword: newPassword
+        });
+
+        return mapUserDataResponse(response);
+    },
 };
