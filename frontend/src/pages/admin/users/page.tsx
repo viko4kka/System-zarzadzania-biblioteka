@@ -16,6 +16,7 @@ import { useUnban } from "../../../hooks/user/use-unban";
 import { useRemoveUser } from "../../../hooks/auth/useRemoveUser";
 import CustomModal from "../../../ui/CustomModal";
 import { MdSupervisorAccount } from "react-icons/md";
+import type { User } from "../../../api/user/user.types";
 
 const UserBadge = () => (
   <Badge
@@ -63,8 +64,12 @@ const DeletedBadge = () => (
 );
 
 function AUsers() {
-  const [isOpened, setIsOpened] = useState<boolean>(false);
+  const [isOpened, setIsOpened] = useState<boolean>(false); //delete confiramtion modal
+
+  const [isOpenedAdmin, setIsOpenedAdmin] = useState<boolean>(false); //make admin confiramtion modal
+
   const [modalData, setModalData] = useState<{
+    //delete confiramtion modal data
     id: string;
     name: string;
     lastname: string;
@@ -75,6 +80,19 @@ function AUsers() {
     name: "",
     lastname: "",
     role: "",
+    mail: "",
+  });
+
+  const [modalAdminData, setModalAdminData] = useState<{
+    //make admin confiramtion modal data
+    id: string;
+    name: string;
+    lastname: string;
+    mail: string;
+  }>({
+    id: "",
+    name: "",
+    lastname: "",
     mail: "",
   });
 
@@ -100,57 +118,193 @@ function AUsers() {
   const commonCellStyle = "border border-solid border-gray-300 p-4";
   const headerCellStyle = "border border-solid border-gray-300 p-3 font-normal";
 
-  return (
-    <>
-      <CustomModal
-        isOpened={isOpened}
-        onClose={() => {
-          setIsOpened(false);
+  const UserMangenemtMenu = ({ item }: { item: User }) => (
+    <Menu
+      menuButton={
+        <Button
+          className={`${user?.mail === item.mail || item.is_Removed ? "cursor-not-allowed" : "cursor-pointer"} text-xl`}
+          disabled={user?.mail === item.mail || item.is_Removed}
+        >
+          <MdMoreVert />
+        </Button>
+      }
+      transition
+      menuClassName={() => "bg-gray-100"}
+    >
+      {item.is_Banned ? (
+        <MenuItem
+          onClick={() => {
+            unban.mutate(item.id);
+          }}
+        >
+          <span className="text-main-navy-blue flex items-center">
+            <span className="text-main-navy-blue mr-2">
+              <FaUnlock />
+            </span>
+            Unban
+          </span>
+        </MenuItem>
+      ) : (
+        <MenuItem
+          onClick={() => {
+            ban.mutate(item.id);
+          }}
+        >
+          <span className="text-main-navy-blue flex items-center">
+            <span className="text-main-navy-blue mr-2">
+              <FaLock />
+            </span>
+            Ban
+          </span>
+        </MenuItem>
+      )}
+
+      {!item.is_Admin && !item.is_Banned && (
+        <MenuItem
+          onClick={() => {
+            setModalAdminData({
+              id: item.id,
+              name: item.name,
+              lastname: item.lastname,
+              mail: item.mail,
+            });
+            setIsOpenedAdmin(true);
+          }}
+        >
+          <span className="text-main-navy-blue flex items-center">
+            <span className="text-main-navy-blue mr-2">
+              <MdSupervisorAccount />
+            </span>
+            Make admin
+          </span>
+        </MenuItem>
+      )}
+
+      <MenuItem
+        onClick={() => {
+          setModalData({
+            id: item.id,
+            name: item.name,
+            lastname: item.lastname,
+            role: item.is_Admin ? "Administrator" : "User",
+            mail: item.mail,
+          });
+          setIsOpened(true);
+          // remove.mutate({ id: item.id, data: null });
         }}
       >
-        <CustomModal.Content className="text-center">
-          <div className="text-main-navy-blue mx-4 my-4 mb-8 text-lg font-bold lg:mx-16">
-            Are you sure you want to delete this user?
-          </div>
-          <div className="my-2 text-sm lg:text-base">
-            User:{" "}
-            <span className="text-main-blue ml-2 max-w-full truncate">{`${modalData.name} ${modalData.lastname}`}</span>
-          </div>
-          <div className="my-2 text-sm lg:text-base">
-            Email:{" "}
-            <span className="text-main-blue ml-2 max-w-full truncate">
-              {modalData.mail}
-            </span>
-          </div>
-          <div className="my-2 mb-6 text-sm lg:text-base">
-            Role:{" "}
-            <span className="text-main-blue ml-2 max-w-full truncate">
-              {modalData.role}
-            </span>
-          </div>
-        </CustomModal.Content>
-        <CustomModal.Footer>
-          <Button
-            intent="third"
-            className="mx-2 h-10 w-24 p-0 lg:mx-8 lg:w-32"
-            onClick={() => {
-              setIsOpened(false);
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            intent="secondary"
-            className="mx-2 h-10 w-24 p-0 lg:mx-8 lg:w-32"
-            onClick={() => {
-              remove.mutate({ id: modalData.id, data: null });
-              setIsOpened(false);
-            }}
-          >
-            Yes
-          </Button>
-        </CustomModal.Footer>
-      </CustomModal>
+        <span className="flex items-center text-red-700">
+          <span className="mr-2 text-red-700">
+            <FaTrashAlt />
+          </span>
+          Remove
+        </span>
+      </MenuItem>
+    </Menu>
+  );
+
+  const ConfirmDeleteUserModal = (
+    <CustomModal
+      isOpened={isOpened}
+      onClose={() => {
+        setIsOpened(false);
+      }}
+    >
+      <CustomModal.Content className="text-center">
+        <div className="text-main-navy-blue mx-4 my-4 mb-8 text-lg font-bold lg:mx-16">
+          Are you sure you want to delete this user?
+        </div>
+        <div className="my-2 text-sm lg:text-base">
+          User:{" "}
+          <span className="text-main-blue ml-2 max-w-full truncate">{`${modalData.name} ${modalData.lastname}`}</span>
+        </div>
+        <div className="my-2 text-sm lg:text-base">
+          Email:{" "}
+          <span className="text-main-blue ml-2 max-w-full truncate">
+            {modalData.mail}
+          </span>
+        </div>
+        <div className="my-2 mb-6 text-sm lg:text-base">
+          Role:{" "}
+          <span className="text-main-blue ml-2 max-w-full truncate">
+            {modalData.role}
+          </span>
+        </div>
+      </CustomModal.Content>
+      <CustomModal.Footer>
+        <Button
+          intent="third"
+          className="mx-2 h-10 w-24 p-0 lg:mx-8 lg:w-32"
+          onClick={() => {
+            setIsOpened(false);
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          intent="secondary"
+          className="mx-2 h-10 w-24 p-0 lg:mx-8 lg:w-32"
+          onClick={() => {
+            remove.mutate({ id: modalData.id, data: null });
+            setIsOpened(false);
+          }}
+        >
+          Yes
+        </Button>
+      </CustomModal.Footer>
+    </CustomModal>
+  );
+
+  const ConfirmMakeAdminUserModal = (
+    <CustomModal
+      isOpened={isOpenedAdmin}
+      onClose={() => {
+        setIsOpenedAdmin(false);
+      }}
+    >
+      <CustomModal.Content className="text-center">
+        <div className="text-main-navy-blue mx-4 my-4 mb-8 text-lg font-bold lg:mx-16">
+          Are you sure you want to grant admin privileges to this user?
+        </div>
+        <div className="my-2 text-sm lg:text-base">
+          User:{" "}
+          <span className="text-main-blue ml-2 max-w-full truncate">{`${modalAdminData.name} ${modalAdminData.lastname}`}</span>
+        </div>
+        <div className="my-2 text-sm lg:text-base">
+          Email:{" "}
+          <span className="text-main-blue ml-2 max-w-full truncate">
+            {modalAdminData.mail}
+          </span>
+        </div>
+      </CustomModal.Content>
+      <CustomModal.Footer>
+        <Button
+          intent="third"
+          className="mx-2 h-10 w-24 p-0 lg:mx-8 lg:w-32"
+          onClick={() => {
+            setIsOpenedAdmin(false);
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          intent="secondary"
+          className="mx-2 h-10 w-24 p-0 lg:mx-8 lg:w-32"
+          onClick={() => {
+            makeAdmin.mutate(modalAdminData.id);
+            setIsOpenedAdmin(false);
+          }}
+        >
+          Yes
+        </Button>
+      </CustomModal.Footer>
+    </CustomModal>
+  );
+
+  return (
+    <>
+      {ConfirmDeleteUserModal}
+      {ConfirmMakeAdminUserModal}
       <div className="mt-12">
         <h1 className="text-main-navy-blue my-5 text-2xl">Users overview</h1>
         <div className="px- flex items-center rounded-xl border border-gray-300 bg-white px-2 py-0 lg:px-6 lg:py-2">
@@ -170,7 +324,7 @@ function AUsers() {
         <div className="w-full max-w-full min-w-0 overflow-x-auto">
           <table
             style={{ minWidth: "900px" }}
-            className="my-8 w-full table-auto rounded-xl border border-solid border-gray-300"
+            className="my-8 hidden w-full table-auto rounded-xl border border-solid border-gray-300 md:table"
           >
             <thead className="bg-gray-100 font-light text-gray-600">
               <tr>
@@ -210,84 +364,7 @@ function AUsers() {
                       )}
                     </td>
                     <td className={`${commonCellStyle} w-12 text-center`}>
-                      <Menu
-                        menuButton={
-                          <Button
-                            className={`${user?.mail === item.mail || item.is_Removed ? "cursor-not-allowed" : "cursor-pointer"} text-xl`}
-                            disabled={
-                              user?.mail === item.mail || item.is_Removed
-                            }
-                          >
-                            <MdMoreVert />
-                          </Button>
-                        }
-                        transition
-                        menuClassName={() => "bg-gray-100"}
-                      >
-                        {item.is_Banned ? (
-                          <MenuItem
-                            onClick={() => {
-                              unban.mutate(item.id);
-                            }}
-                          >
-                            <span className="text-main-navy-blue flex items-center">
-                              <span className="text-main-navy-blue mr-2">
-                                <FaUnlock />
-                              </span>
-                              Unban
-                            </span>
-                          </MenuItem>
-                        ) : (
-                          <MenuItem
-                            onClick={() => {
-                              ban.mutate(item.id);
-                            }}
-                          >
-                            <span className="text-main-navy-blue flex items-center">
-                              <span className="text-main-navy-blue mr-2">
-                                <FaLock />
-                              </span>
-                              Ban
-                            </span>
-                          </MenuItem>
-                        )}
-
-                        {!item.is_Admin && !item.is_Banned && (
-                          <MenuItem
-                            onClick={() => {
-                              makeAdmin.mutate(item.id);
-                            }}
-                          >
-                            <span className="text-main-navy-blue flex items-center">
-                              <span className="text-main-navy-blue mr-2">
-                                <MdSupervisorAccount />
-                              </span>
-                              Make admin
-                            </span>
-                          </MenuItem>
-                        )}
-
-                        <MenuItem
-                          onClick={() => {
-                            setModalData({
-                              id: item.id,
-                              name: item.name,
-                              lastname: item.lastname,
-                              role: item.is_Admin ? "Administrator" : "User",
-                              mail: item.mail,
-                            });
-                            setIsOpened(true);
-                            // remove.mutate({ id: item.id, data: null });
-                          }}
-                        >
-                          <span className="flex items-center text-red-700">
-                            <span className="mr-2 text-red-700">
-                              <FaTrashAlt />
-                            </span>
-                            Remove
-                          </span>
-                        </MenuItem>
-                      </Menu>
+                      <UserMangenemtMenu item={item} />
                     </td>
                   </tr>
                 ))
@@ -296,6 +373,64 @@ function AUsers() {
               )}
             </tbody>
           </table>
+
+          <div className="md:hidden">
+            {users.isSuccess ? (
+              users.data.users.map((item, id) => (
+                <div
+                  key={id}
+                  className="my-5 flex justify-between rounded-xl border border-gray-200 bg-white p-5 shadow-md"
+                >
+                  <div className="w-full">
+                    <div className="text-main-navy-blue flex w-full items-center">
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-lg">
+                          {`${item.name} ${item.lastname}`}{" "}
+                        </div>
+                      </div>
+
+                      {user?.mail === item.mail && (
+                        <span className="text-main-blue ml-2 shrink-0">
+                          (You)
+                        </span>
+                      )}
+                    </div>
+                    <div className="mb-4 block w-full min-w-0 truncate text-sm text-gray-600">
+                      {item.mail}
+                    </div>
+
+                    <div className="text-main-navy-blueflex my-3 items-center">
+                      <span className="text-main-navy-blue mr-2 text-sm">
+                        Role:
+                      </span>
+                      {item.is_Admin ? (
+                        <span className="text-font-highlight text-sm">
+                          Administrator
+                        </span>
+                      ) : (
+                        <span className="text-main-blue text-sm">User</span>
+                      )}
+                    </div>
+                    <div className="text-main-navy-blue flex items-center text-sm">
+                      <span className="mr-2">Status:</span>
+                      {item.is_Removed ? (
+                        <DeletedBadge />
+                      ) : item.is_Banned ? (
+                        <BannedBadge />
+                      ) : (
+                        <ActiveBadge />
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <UserMangenemtMenu item={item} />
+                  </div>
+                </div>
+              ))
+            ) : (
+              <span> No data</span>
+            )}
+          </div>
         </div>
         <CustomPagination
           pagination={pagination}
