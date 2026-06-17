@@ -94,7 +94,7 @@ function ULoans() {
         </h2>
 
         <div className="w-full overflow-x-auto">
-          <table className="my-8 w-full min-w-225 table-auto rounded-xl border border-solid border-gray-300">
+          <table className="my-8 hidden w-full min-w-225 table-auto rounded-xl border border-solid border-gray-300 md:table">
             <thead className="bg-gray-100 font-light text-gray-600">
               <tr>
                 <th className={`${headerCellStyle}`}>Book</th>
@@ -105,47 +105,89 @@ function ULoans() {
             </thead>
 
             <tbody className="bg-white">
-              {
-                activeLoansQuery.isSuccess &&
-                  activeLoansQuery.data.data.length > 0 &&
-                  activeLoansQuery.data.data.map((item, id) => (
-                    <tr key={id}>
-                      <td className={`${commonCellStyle} max-w-120`}>
-                        <div className="text-main-navy-blue truncate text-balance">
-                          {item.copy.book.title}
-                        </div>
-                        <div className="truncate text-sm font-light text-balance text-gray-500">
-                          {formatAuthors(item.copy.book.authors)}{" "}
-                        </div>
-                      </td>
-                      <td className={`${commonCellStyle} min-w-32 text-center`}>
-                        {formatDate(new Date(item.start_date))}
-                      </td>
-                      <td className={`${commonCellStyle} min-w-64 text-center`}>
-                        <Button
-                          intent="secondary"
-                          className="p-2 px-5"
-                          onClick={() => {
-                            setModalData({
-                              title: item.copy.book.title,
-                              id: item.copy_id,
-                            });
-                            setIsOpened(true);
-                          }}
-                        >
-                          Return book
-                        </Button>
-                      </td>
-                    </tr>
-                  )) //: (
-                //   <span> You don't have any loans</span>
-                // )
-                // : (
-                //   <span> No data</span>
-                // )
-              }
+              {activeLoansQuery.isSuccess &&
+                activeLoansQuery.data.data.length > 0 &&
+                activeLoansQuery.data.data.map((item, id) => (
+                  <tr key={id}>
+                    <td className={`${commonCellStyle} max-w-120`}>
+                      <div className="text-main-navy-blue truncate text-balance">
+                        {item.copy.book.title}
+                      </div>
+                      <div className="truncate text-sm font-light text-balance text-gray-500">
+                        {formatAuthors(item.copy.book.authors)}{" "}
+                      </div>
+                    </td>
+                    <td className={`${commonCellStyle} min-w-32 text-center`}>
+                      {formatDate(new Date(item.start_date))}
+                    </td>
+                    <td className={`${commonCellStyle} min-w-64 text-center`}>
+                      <Button
+                        intent="secondary"
+                        className="p-2 px-5"
+                        onClick={() => {
+                          setModalData({
+                            title: item.copy.book.title,
+                            id: item.copy_id,
+                          });
+                          setIsOpened(true);
+                        }}
+                      >
+                        Return book
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
+
+          <div className="md:hidden">
+            {activeLoansQuery.isSuccess ? (
+              activeLoansQuery.data.data.map((item, id) => (
+                <div
+                  key={id}
+                  className="my-5 flex justify-between rounded-xl border border-gray-200 bg-white p-5 shadow-md"
+                >
+                  <div className="w-full">
+                    <div className="text-main-navy-blue flex w-full items-center">
+                      <div className="min-w-0 flex-1">
+                        <div className="text-lg wrap-break-word">
+                          {item.copy.book.title}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mb-4 block w-full min-w-0 truncate text-sm text-gray-600">
+                      {formatAuthors(item.copy.book.authors)}
+                    </div>
+
+                    <div className="text-main-navy-blueflex my-3 items-center">
+                      <span className="text-main-navy-blue mr-2 text-sm">
+                        Loan date:
+                      </span>
+                      {formatDate(new Date(item.start_date))}
+                    </div>
+                    <div className="text-main-navy-blue flex items-center text-sm">
+                      <Button
+                        intent="secondary"
+                        className="p-2 px-5"
+                        onClick={() => {
+                          setModalData({
+                            title: item.copy.book.title,
+                            id: item.copy_id,
+                          });
+                          setIsOpened(true);
+                        }}
+                      >
+                        Return book
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <span> No data</span>
+            )}
+          </div>
+
           {activeLoansQuery.isSuccess ? (
             activeLoansQuery.data.data.length <= 0 ? (
               <div className="my-24 w-full text-center">
