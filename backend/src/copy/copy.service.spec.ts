@@ -24,7 +24,7 @@ const mockPrisma = {
   }
 };
 
-describe('UserService', () => {
+describe('CopyService', () => {
   let service: CopyService;
 
   beforeEach(async () => {
