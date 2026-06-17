@@ -146,6 +146,13 @@ describe('BookService', () => {
         cover: null,
         ISBN: '1234567890123',
         publisher_id: 1,
+        authors: [
+          {
+            id_author: 1,
+            author_name: 'Andrzej',
+            author_lastname: 'Sapkowski',
+          },
+        ],
         _count: { copies: 3 },
       });
       mockPrisma.copy.count.mockResolvedValue(2); // 2 dostępne kopie
@@ -154,6 +161,7 @@ describe('BookService', () => {
 
       expect(result.totalCopies).toBe(3);
       expect(result.availableCopies).toBe(2);
+      expect(result.authors).toHaveLength(1);
     });
 
     it('powinno rzucić NotFoundException gdy książka nie istnieje', async () => {
