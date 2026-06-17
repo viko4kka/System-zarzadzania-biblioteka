@@ -40,8 +40,9 @@ function ULoans() {
     return authorsStrs.join(", ");
   };
 
-  const commonCellStyle = "border border-solid border-gray-300 p-4";
-  const headerCellStyle = "border border-solid border-gray-300 p-3 font-normal";
+  const commonCellStyle = "border border-solid border-gray-300 xl:p-4 p-2";
+  const headerCellStyle =
+    "border border-solid border-gray-300 xl:p-3 p-2 font-normal";
 
   return (
     <>
@@ -83,9 +84,11 @@ function ULoans() {
         </CustomModal.Footer>
       </CustomModal>
 
-      <div className="mt-12">
-        <h1 className="text-main-navy-blue my-5 text-2xl">My loans</h1>
-        <h2 className="text-main-navy-blue-hover text-lg">
+      <div className="mt-6 lg:mt-0 xl:mt-12">
+        <h1 className="text-main-navy-blue my-2 text-lg xl:my-5 xl:text-2xl">
+          My loans
+        </h1>
+        <h2 className="text-main-navy-blue-hover text-sm xl:text-lg">
           You have{" "}
           {activeLoansQuery.isSuccess
             ? activeLoansQuery.data.data.length.toString() + " "
@@ -94,11 +97,11 @@ function ULoans() {
         </h2>
 
         <div className="w-full overflow-x-auto">
-          <table className="my-8 hidden w-full min-w-225 table-auto rounded-xl border border-solid border-gray-300 md:table">
+          <table className="hidden w-full min-w-142 table-auto rounded-xl border border-solid border-gray-300 lg:my-2 lg:table xl:my-8">
             <thead className="bg-gray-100 font-light text-gray-600">
               <tr>
                 <th className={`${headerCellStyle}`}>Book</th>
-                <th className={`${headerCellStyle} w-44`}>Loan date</th>
+                <th className={`${headerCellStyle} w-28 xl:w-44`}>Loan date</th>
 
                 <th className={`${headerCellStyle} w-24`}></th>
               </tr>
@@ -109,21 +112,25 @@ function ULoans() {
                 activeLoansQuery.data.data.length > 0 &&
                 activeLoansQuery.data.data.map((item, id) => (
                   <tr key={id}>
-                    <td className={`${commonCellStyle} max-w-120`}>
-                      <div className="text-main-navy-blue truncate text-balance">
+                    <td className={`${commonCellStyle} max-w-140`}>
+                      <div className="text-main-navy-blue truncate text-sm text-balance xl:text-base">
                         {item.copy.book.title}
                       </div>
-                      <div className="truncate text-sm font-light text-balance text-gray-500">
+                      <div className="truncate text-xs font-light text-balance text-gray-500 xl:text-sm">
                         {formatAuthors(item.copy.book.authors)}{" "}
                       </div>
                     </td>
-                    <td className={`${commonCellStyle} min-w-32 text-center`}>
+                    <td
+                      className={`${commonCellStyle} min-w-4 text-center text-sm xl:text-base`}
+                    >
                       {formatDate(new Date(item.start_date))}
                     </td>
-                    <td className={`${commonCellStyle} min-w-64 text-center`}>
+                    <td
+                      className={`${commonCellStyle} text-center text-sm xl:min-w-64 xl:text-base`}
+                    >
                       <Button
                         intent="secondary"
-                        className="p-2 px-5"
+                        className="px-1 py-2 text-xs xl:p-2 xl:px-5 xl:text-base"
                         onClick={() => {
                           setModalData({
                             title: item.copy.book.title,
@@ -140,7 +147,7 @@ function ULoans() {
             </tbody>
           </table>
 
-          <div className="md:hidden">
+          <div className="lg:hidden">
             {activeLoansQuery.isSuccess ? (
               activeLoansQuery.data.data.map((item, id) => (
                 <div
@@ -150,25 +157,27 @@ function ULoans() {
                   <div className="w-full">
                     <div className="text-main-navy-blue flex w-full items-center">
                       <div className="min-w-0 flex-1">
-                        <div className="text-lg wrap-break-word">
+                        <div className="text-sm wrap-break-word">
                           {item.copy.book.title}
                         </div>
                       </div>
                     </div>
-                    <div className="mb-4 block w-full min-w-0 truncate text-sm text-gray-600">
+                    <div className="mb-1 block w-full min-w-0 truncate text-xs text-gray-600 lg:mb-4">
                       {formatAuthors(item.copy.book.authors)}
                     </div>
 
-                    <div className="text-main-navy-blueflex my-3 items-center">
-                      <span className="text-main-navy-blue mr-2 text-sm">
+                    <div className="text-main-navy-blueflex my-2 items-center lg:my-3">
+                      <span className="text-main-navy-blue mr-2 text-xs">
                         Loan date:
                       </span>
-                      {formatDate(new Date(item.start_date))}
+                      <span className="text-xs">
+                        {formatDate(new Date(item.start_date))}
+                      </span>
                     </div>
-                    <div className="text-main-navy-blue flex items-center text-sm">
+                    <div className="text-main-navy-blue flex items-center text-xs">
                       <Button
                         intent="secondary"
-                        className="p-2 px-5"
+                        className="p-1 px-4 lg:p-2 lg:px-5"
                         onClick={() => {
                           setModalData({
                             title: item.copy.book.title,
