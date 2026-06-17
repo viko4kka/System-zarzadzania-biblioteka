@@ -42,7 +42,7 @@ function DeleteBookModal({ bookId, bookTitle, isOpen, onClose }: DeleteBookModal
         <CustomModal isOpened={isOpen} onClose={handleClose} header="" width="450px" bgColor="bg-color-gray-50">
             <CustomModal.Content className="w-full flex flex-col gap-4 px-6 pt-4">
                 <h2 className="text-center text-2xl font-bold uppercase text-main-navy-blue tracking-wide">
-                    Delete Book
+                    Delete Copy
                 </h2>
 
                 {errorMsg && (
@@ -52,10 +52,10 @@ function DeleteBookModal({ bookId, bookTitle, isOpen, onClose }: DeleteBookModal
                 )}
 
                 <p className="text-center text-gray-700 text-sm md:text-base leading-relaxed my-2">
-                    Are you sure you want to delete 
-                    {bookTitle ? <strong className="text-main-navy-blue"> "{bookTitle}"</strong> : ' this book'}? 
+                    Are you sure you want to delete this copy
+                    {bookTitle ? <> of <strong className="text-main-navy-blue">"{bookTitle}"</strong></> : ''}?
                     <br />
-                    <span className="text-xs text-red-500 font-medium">This action cannot be undone.</span>
+                    <span className="text-xs text-red-500 font-medium">The book will be completely removed from the system.</span>
                 </p>
             </CustomModal.Content>
 

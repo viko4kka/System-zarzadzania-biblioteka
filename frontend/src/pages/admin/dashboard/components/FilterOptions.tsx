@@ -11,18 +11,17 @@ function FilterOptions() {
   ];
 
   return (
-    <div className="flex gap-4 p-6 justify-center bg-gray-50 rounded-xl">
+    <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto p-0 md:p-6 justify-center bg-transparent md:bg-gray-50 rounded-xl">
       {filtersData.map((btn) => {
         const isActive = activeFIlter === btn.id;
 
         return (
           <Button
             key={btn.id}
-            
             intent={isActive ? 'primary' : 'lightButton'}
             size="medium"
-            
             onClick={() => setActiveFilter(btn.id)}
+            className="w-full md:w-auto text-center justify-center"
           >
             {btn.label}
           </Button>
