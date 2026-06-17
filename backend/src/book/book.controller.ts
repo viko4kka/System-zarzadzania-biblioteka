@@ -89,38 +89,42 @@ export class BookController {
   }
 
 
-@Patch('update/:id')
-@HttpCode(HttpStatus.OK)
-@ApiOperation({
-  summary: 'Aktualizacja danych książki',
-  description: 'Tylko administrator może modyfikować książki.',
-})
-@ApiBody({
-  schema: {
-    example: {
-      title: 'C++ dl początkijących',
-      year: 1993,
-      cover: 'https://example.com/cover.jpg',
-      publisher_id: 1,
-      ISBN: '9788375752458',
+  @Patch('update/:id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Aktualizacja danych książki',
+    description: 'Tylko administrator może modyfikować książki.',
+  })
+  @ApiBody({
+    schema: {
+      example: {
+        title: 'C++ dla początkujących',
+        year: 1993,
+        cover: 'https://example.com/cover.jpg',
+        publisher_name: 'SuperNowa',
+        ISBN: '9788375352458',
+        authors: [
+          { author_name: 'Artur', author_lastname: 'Nowak' }
+        ],
+      },
     },
-  },
-})
-async updateBook(
-  @Param('id') id: string,
-  @Body() dto: {
-    title?: string;
-    year?: number;
-    cover?: string;
-    publisher_id?: number;
-    ISBN?: string;
-  },
-  @Req() req: Request,
-) {
-  const payload = await this.authService.verifyToken(req);
-  if (!payload.is_Admin) {
-    throw new ForbiddenException('Tylko administrator może modyfikować książki');
+  })
+  async updateBook(
+    @Param('id') id: string,
+    @Body() dto: {
+      title?: string;
+      year?: number;
+      cover?: string;
+      publisher_name?: string;
+      ISBN?: string;
+      authors?: { author_name: string; author_lastname: string }[];
+    },
+    @Req() req: Request,
+  ) {
+    const payload = await this.authService.verifyToken(req);
+    if (!payload.is_Admin) {
+      throw new ForbiddenException('Tylko administrator może modyfikować książki');
+    }
+    return this.bookService.updateBook(parseInt(id), dto);
   }
-  return this.bookService.updateBook(parseInt(id), dto);
-}
 }
