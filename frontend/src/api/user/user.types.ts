@@ -4,6 +4,13 @@ export interface UsersListParams {
     search?: string;
 }
 
+export interface UsersMeta {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+}
+
 //Response (only data)
 export interface UserActionResponseDto {
     name: string;
@@ -22,10 +29,15 @@ export interface UserDto {
     id: string;
     name: string;
     lastname: string;
+    mail: string;
+    is_Admin: boolean;
+    is_Banned: boolean;
+    is_Removed: boolean;
 }
 
 export interface UsersListResponseDto {
-    users: UserDto[];
+    data: UserDto[];
+    meta: UsersMeta
 }
 
 export interface BorrowedBookDto {
@@ -62,6 +74,10 @@ export interface User {
     id: string;
     name: string;
     lastname: string;
+    mail:string;
+    is_Admin: boolean;
+    is_Banned: boolean;
+    is_Removed: boolean;
 }
 
 export interface BorrowedBook {

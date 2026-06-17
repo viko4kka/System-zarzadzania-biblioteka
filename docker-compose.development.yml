@@ -22,7 +22,7 @@ services:
     build:
       context: .
       dockerfile: ./devops/docker/Dockerfile.backend
-    command: npm run start
+      target: dev
     ports:
       - "4000:4000"
     healthcheck:
@@ -35,10 +35,11 @@ services:
     environment:
       NODE_ENV: development
       API_PROXY_TARGET: "http://backend:4000"
+      VITE_BACKEND_SERVER: "http://localhost:4000"
     build:
       context: .
       dockerfile: ./devops/docker/Dockerfile.frontend
-    command: npm run dev
+      target: dev
     ports:
       - "3000:3000"
     depends_on:

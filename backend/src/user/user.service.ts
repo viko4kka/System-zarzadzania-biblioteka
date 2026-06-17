@@ -1,5 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
+import { makeHash, verifyHash } from '../utils/bcrypt';
 
 @Injectable()
 export class UserService {
@@ -144,6 +149,66 @@ export class UserService {
         id: true,
         name: true,
         is_Banned: true,
+      },
+    });
+
+    return updatedUser;
+  }
+
+  async updateUser(
+    userId: number,
+    newName: string,
+    newLastname: string,
+    oldPassword: string,
+    newPassword: string,
+  ) {
+    // Pobranie danych użytkownika o zadanym ID
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        lastname: true,
+        password: true,
+      },
+    });
+
+    // Sprawdzenie czy użytkownik istnieje
+    if (!user) {
+      throw new NotFoundException('Użytkownik nie został znaleziony');
+    }
+
+    // Weryfikacja hasła
+    const isPasswordValid = await verifyHash(oldPassword, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Niepoprawne hasło');
+    }
+
+    // Jeśli nowe dane nie zostały podane, zachowujemy stare wartości
+    if (!newName.trim()) {
+      newName = user.name;
+    }
+
+    if (!newLastname.trim()) {
+      newLastname = user.lastname;
+    }
+
+    let passwordHash = '';
+    if (!newPassword.trim()) {
+      passwordHash = user.password;
+    } else {
+      // Hashowanie hasła
+      passwordHash = await makeHash(newPassword);
+    }
+
+    // Aktualizacja użytkownika - zmiana imienia, nazwiska i hasła
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: { name: newName, lastname: newLastname, password: passwordHash },
+      select: {
+        id: true,
+        name: true,
+        lastname: true,
       },
     });
 
