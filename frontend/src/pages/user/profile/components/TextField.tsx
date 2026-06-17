@@ -26,14 +26,16 @@ export default function TextField({
       value={value}                
       onChange={onChange}          
       className="
-        px-4 py-2
+        px-3 py-1.5
+        text-sm
         rounded-xl
         border-2 border-gray-300
         outline-none
         focus:border-gray-500
         transition
-        w-[50%]
-        mb-[1%]
+        w-[90%]
+        md:w-[50%]
+        mb-2
       "
     />
   );

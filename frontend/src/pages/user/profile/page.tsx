@@ -91,9 +91,9 @@ function UProfile() {
 
     return (
         <div className="w-full flex flex-col">
-            <h1 className="text-3xl m-[1%] ml-[0%]">My profile</h1>
+            <h1 className="text-3xl m-[1%]">My profile</h1>
 
-            <div className="grid grid-cols-1 grid-rows-5 grid-flow-col gap-4 pb-[1%]">
+            <div className="grid grid-cols-1 grid-rows-5 grid-flow-col gap-4 pb-[1%] ml-[1%]">
                 <div>
                     <h2>Name</h2>
                     <TextField
@@ -138,7 +138,7 @@ function UProfile() {
                 </div>
             </div>
 
-            <div className="flex gap-4">
+            <div className="flex gap-4 mt-6 ml-[1%]">
                 <Button
                     intent="secondary"
                     size="medium"
