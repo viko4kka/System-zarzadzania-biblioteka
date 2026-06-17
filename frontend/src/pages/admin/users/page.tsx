@@ -317,7 +317,7 @@ function AUsers() {
           </span>
           <input
             placeholder="Search users"
-            className="ml-2 w-full bg-white p-0.5 text-xs focus:outline-none xl:ml-8 xl:p-2 xl:text-base"
+            className="ml-2 w-full bg-white p-2 text-xs focus:outline-none lg:p-0.5 xl:ml-8 xl:p-2 xl:text-base"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
