@@ -2,11 +2,13 @@ import { api } from "../api";
 import type { 
     BookActionDto, 
     LoanBookResponseDto, 
-    ReturnBookResponseDto 
+    ReturnBookResponseDto ,
+    ActiveLoansDto,
+    ActiveLoansParams
 } from "./loan.types";
 import { mapLoanBookResponse, mapReturnBookResponse } from "./loan.mapper";
 
-const baseURL = "/loan";
+const baseURL = "/api/loan";
 
 export const loanApi = {
     loanBook: async (data: BookActionDto): Promise<{ copyId: string, startDate: Date }> => {
@@ -14,8 +16,12 @@ export const loanApi = {
         return mapLoanBookResponse(response);
     },
 
-    returnBook: async (data: BookActionDto): Promise<{ copyId: string, returnDate: Date }> => {
-        const response = await api.patch<ReturnBookResponseDto>(`${baseURL}/returnBook/`, data);
+    returnBook: async (copy_id: string): Promise<{ copyId: string, returnDate: Date }> => {
+        const response = await api.patch<ReturnBookResponseDto>(`${baseURL}/returnBook/${copy_id}`);
         return mapReturnBookResponse(response);
+    },
+    activeLoans: async (params: ActiveLoansParams): Promise<ActiveLoansDto> => {
+        const response = await api.get<ActiveLoansDto>(`${baseURL}/ActiveLoans`, params);
+        return response
     },
 };

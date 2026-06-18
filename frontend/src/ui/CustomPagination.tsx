@@ -1,5 +1,6 @@
 import ResponsivePagination from "react-responsive-pagination";
 import { HiOutlineChevronLeft, HiOutlineChevronRight } from "react-icons/hi";
+
 import type { PaginationState } from "../hooks/pagination/use-pagination";
 
 type CustonPaginationProps = {
