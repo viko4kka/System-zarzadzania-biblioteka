@@ -14,6 +14,7 @@ const mockPrisma = {
   loan: {
     findFirst: jest.fn(),
     findMany: jest.fn(),
+    count: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
   },
@@ -122,25 +123,42 @@ describe('LoanService', () => {
         },
       ];
       mockPrisma.loan.findMany.mockResolvedValue(loans);
+      mockPrisma.loan.count.mockResolvedValue(1);
 
       const result = await service.getUserLoans(42);
 
-      expect(result).toHaveLength(1);
-      expect(result[0].copy.book.title).toBe('Wiedźmin');
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0].copy.book.title).toBe('Wiedźmin');
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 1, totalPages: 1 });
     });
 
     it('powinno zwrócić pustą tablicę gdy użytkownik nie ma wypożyczeń', async () => {
       mockPrisma.loan.findMany.mockResolvedValue([]);
+      mockPrisma.loan.count.mockResolvedValue(0);
 
       const result = await service.getUserLoans(42);
 
-      expect(result).toEqual([]);
+      expect(result).toEqual({
+        data: [],
+        meta: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      });
     });
 
     it('powinno rzucić InternalServerErrorException gdy baza zwróci błąd', async () => {
       mockPrisma.loan.findMany.mockRejectedValue(new Error('DB error'));
 
       await expect(service.getUserLoans(42)).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('powinno stosować paginację do historii wypożyczeń', async () => {
+      mockPrisma.loan.findMany.mockResolvedValue([]);
+      mockPrisma.loan.count.mockResolvedValue(25);
+
+      await service.getUserLoans(42, 3, 5);
+
+      expect(mockPrisma.loan.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ skip: 10, take: 5 }),
+      );
     });
   });
 });

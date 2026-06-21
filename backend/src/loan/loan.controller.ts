@@ -68,10 +68,28 @@ export class LoanController {
     summary: 'Historia wypożyczeń użytkownika',
     description: 'Zwraca wszystkie wypożyczenia zalogowanego użytkownika, także zwrócone.',
   })
-  async getUserLoans(@Req() req: Request) {
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Numer strony (domyślnie 1)',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Liczba wyników na stronę (domyślnie 10)',
+  })
+  async getUserLoans(
+    @Req() req: Request,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
     const payload = await this.authService.verifyToken(req);
 
-    return await this.loanService.getUserLoans(payload.id);
+    const pageNum = page ? parseInt(page) : 1;
+    const limitNum = limit ? parseInt(limit) : 10;
+    return await this.loanService.getUserLoans(payload.id, pageNum, limitNum);
   }
 
   @Get('ActiveLoans')
@@ -112,7 +130,24 @@ export class LoanController {
     summary: 'Historia wypożyczeń wybranego użytkownika',
     description: 'Tylko administrator może zobaczyć wypożyczenia dowolnego użytkownika.',
   })
-  async getUserLoansByAdmin(@Param('user_id') userIdParam: string, @Req() req: Request) {
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Numer strony (domyślnie 1)',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Liczba wyników na stronę (domyślnie 10)',
+  })
+  async getUserLoansByAdmin(
+    @Param('user_id') userIdParam: string,
+    @Req() req: Request,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
     const payload = await this.authService.verifyToken(req);
 
     if (!payload.is_Admin) {
@@ -124,6 +159,8 @@ export class LoanController {
       throw new BadRequestException('user_id musi być dodatnią liczbą całkowitą');
     }
 
-    return await this.loanService.getUserLoans(userId);
+    const pageNum = page ? parseInt(page) : 1;
+    const limitNum = limit ? parseInt(limit) : 10;
+    return await this.loanService.getUserLoans(userId, pageNum, limitNum);
   }
 }
