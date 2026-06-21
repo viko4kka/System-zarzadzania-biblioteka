@@ -10,6 +10,16 @@ import { PrismaService } from '../prisma.service';
 export class LoanService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private normalizePagination(page: number, limit: number) {
+    const validPage = Number.isFinite(page) ? Math.max(1, page) : 1;
+    const validLimit = Number.isFinite(limit)
+      ? Math.min(Math.max(1, limit), 100)
+      : 10;
+    const skip = (validPage - 1) * validLimit;
+
+    return { validPage, validLimit, skip };
+  }
+
   async loanBook(userId: number, copyId: number) {
 
     const copy = await this.prisma.copy
@@ -80,10 +90,14 @@ export class LoanService {
       });
   }
 
-  async getUserLoans(userId: number) {
-    return await this.prisma.loan
-      .findMany({
+  async getUserLoans(userId: number, page = 1, limit = 10) {
+    const { validPage, validLimit, skip } = this.normalizePagination(page, limit);
+
+    const [loans, total] = await Promise.all([
+      this.prisma.loan.findMany({
         where: { user_id: userId },
+        skip,
+        take: validLimit,
         orderBy: { start_date: 'desc' },
         select: {
           id_loan: true,
@@ -104,23 +118,32 @@ export class LoanService {
             },
           },
         },
-      })
-      .catch(() => {
-        throw new InternalServerErrorException('Błąd bazy danych');
-      });
+      }),
+      this.prisma.loan.count({
+        where: { user_id: userId },
+      }),
+    ]).catch(() => {
+      throw new InternalServerErrorException('Błąd bazy danych');
+    });
+
+    return {
+      data: loans,
+      meta: {
+        page: validPage,
+        limit: validLimit,
+        total,
+        totalPages: Math.ceil(total / validLimit),
+      },
+    };
   }
 
   async getUserActiveLoans(userId: number, page: number, limit: number) {
-    // Walidacja parametrów
-    const validPage = Math.max(1, page);
-    const validLimit = Math.min(Math.max(1, limit), 100); // maksymalnie 100 wyników
-    const skip = (validPage - 1) * validLimit;
+    const { validPage, validLimit, skip } = this.normalizePagination(page, limit);
 
-    //
     const [loans, total] = await Promise.all([
       this.prisma.loan.findMany({
         where: { user_id: userId, return_date: null },
-        skip: skip,
+        skip,
         take: validLimit,
         select: {
           id_loan: true,
@@ -149,23 +172,20 @@ export class LoanService {
         where: {
           user_id: userId,
           return_date: null,
-        }
+        },
       }),
     ]).catch(() => {
-        throw new InternalServerErrorException('Błąd bazy danych');
-      });;
+      throw new InternalServerErrorException('Błąd bazy danych');
+    });
 
-    // Zwracamy dane z metadanymi paginacji
     return {
       data: loans,
       meta: {
         page: validPage,
         limit: validLimit,
-        total: total,
+        total,
         totalPages: Math.ceil(total / validLimit),
       },
     };
-
-
   }
 }
