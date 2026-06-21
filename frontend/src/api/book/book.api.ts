@@ -26,7 +26,7 @@ import {
     mapAddPublisherResponse
  } from "./book.mapper";
 
-const baseURL = "/book";
+const baseURL = "/api/book";
 
 export const bookApi = {
     addBook: async (data: AddBookDto): Promise<{ id: string, title: string }> => {

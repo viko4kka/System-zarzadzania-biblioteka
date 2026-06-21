@@ -1,9 +1,10 @@
 export interface AddBookDto {
     title: string;
     year: number;
-    cover: string;
-    publisher_id: string;
-    ISBN: string;
+    publisher_name: string;
+    authors: AddAuthorDto[];
+    cover?: string;
+    ISBN?: string;  
 }
 
 export interface RemoveBookDto {
@@ -30,6 +31,7 @@ export interface RemoveCopyDto {
 
 export interface AddAuthorDto {
     author_name: string;
+    author_lastname: string;
 }
 
 //Response (only data)
@@ -54,9 +56,23 @@ export interface BookDataResponseDto {
     title: string;
     year: number;
     cover: string;
-    publisher_id: string;
     ISBN: string;
     number_of_copies: number;
+    
+    publisher_id: string | number; 
+
+    id_book?: number;
+    publisher?: {
+        id_publisher: number;
+        publisher_name: string;
+    };
+    authors?: {
+        id_author: number;
+        author_name: string;
+        author_lastname: string;
+    }[];
+    total_copies?: number;
+    available_copies?: number;
 }
 
 export interface AddPublisherResponseDto {
@@ -87,7 +103,13 @@ export interface BookData {
     title: string;
     year: number;
     cover: string;
-    publisherId: string;
+    publisherId: string; 
+    publisherName?: string; 
     ISBN: string;
     numberOfCopies: number;
+    authors?: { 
+        author_name: string;
+        author_lastname: string;
+    }[];
 }
+

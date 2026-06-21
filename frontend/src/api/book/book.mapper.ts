@@ -25,9 +25,15 @@ export const mapBookDataResponse = (dto: BookDataResponseDto): BookData => ({
     title: dto.title,
     year: dto.year,
     cover: dto.cover,
-    publisherId: dto.publisher_id,
+    publisherId: dto.publisher_id?.toString() || '', 
+    publisherName: dto.publisher?.publisher_name || '', 
     ISBN: dto.ISBN,
-    numberOfCopies: dto.number_of_copies
+    numberOfCopies: dto.number_of_copies || dto.total_copies || 0,
+
+    authors: dto.authors ? dto.authors.map(author => ({
+        author_name: author.author_name,
+        author_lastname: author.author_lastname
+    })) : []
 });
 
 export const mapAddPublisherResponse = (dto: AddPublisherResponseDto): { id: string, publisherName: string } => ({
