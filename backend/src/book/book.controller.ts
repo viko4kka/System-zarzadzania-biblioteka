@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Patch,
+  Delete,
   Query,
   Param,
   Body,
@@ -127,4 +128,18 @@ export class BookController {
     }
     return this.bookService.updateBook(parseInt(id), dto);
   }
+
+@Delete('delete/:id')
+@HttpCode(HttpStatus.OK)
+@ApiOperation({
+  summary: 'Trwałe usunięcie książki',
+  description: 'Tylko administrator. Kaskadowo usuwa kopie i wypożyczenia.',
+})
+async hardDeleteBook(@Param('id') id: string, @Req() req: Request) {
+  const payload = await this.authService.verifyToken(req);
+  if (!payload.is_Admin) {
+    throw new ForbiddenException('Tylko administrator może trwale usuwać książki');
+  }
+  return this.bookService.hardDeleteBook(parseInt(id));
+}
 }

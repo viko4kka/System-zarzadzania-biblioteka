@@ -341,4 +341,15 @@ async updateBook(bookId: number, dto: {
     })
     .catch(() => { throw new InternalServerErrorException('Nie udało się zaktualizować książki'); });
 }
+  async hardDeleteBook(bookId: number) {
+  await this.findBookOrThrow(bookId);
+
+  await this.prisma.loan.deleteMany({
+    where: { copy: { book_id: bookId } },
+  });
+
+  await this.prisma.copy.deleteMany({ where: { book_id: bookId } });
+
+  return this.prisma.book.delete({ where: { id_book: bookId } });
+}
 }
