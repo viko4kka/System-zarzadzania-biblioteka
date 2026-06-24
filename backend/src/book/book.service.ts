@@ -267,89 +267,123 @@ export class BookService {
     throw new InternalServerErrorException('Nie udało się dodać wydawnictwa');
   }
 
-async updateBook(bookId: number, dto: {
-  title?: string;
-  year?: number;
-  cover?: string;
-  publisher_name?: string;
-  ISBN?: string;
-  authors?: { author_name: string; author_lastname: string }[];
-}) {
-  await this.findBookOrThrow(bookId);
+  async updateBook(
+    bookId: number,
+    dto: {
+      title?: string;
+      year?: number;
+      cover?: string;
+      publisher_name?: string;
+      ISBN?: string;
+      authors?: { author_name: string; author_lastname: string }[];
+    },
+  ) {
+    await this.findBookOrThrow(bookId);
 
-  if (dto.ISBN && dto.ISBN.length !== 13) {
-    throw new BadRequestException('ISBN musi mieć dokładnie 13 znaków');
-  }
+    if (dto.ISBN && dto.ISBN.length !== 13) {
+      throw new BadRequestException('ISBN musi mieć dokładnie 13 znaków');
+    }
 
-  const currentYear = new Date().getFullYear();
-  if (dto.year && (dto.year < 1900 || dto.year > currentYear + 3)) {
-    throw new BadRequestException(`Rok publikacji musi być między 1900 a ${currentYear + 3}`);
-  }
+    const currentYear = new Date().getFullYear();
+    if (dto.year && (dto.year < 1900 || dto.year > currentYear + 3)) {
+      throw new BadRequestException(
+        `Rok publikacji musi być między 1900 a ${currentYear + 3}`,
+      );
+    }
 
-  if (dto.title || dto.ISBN) {
-    const existing = await this.prisma.book
-      .findFirst({
-        where: {
-          AND: [
-            { id_book: { not: bookId } },
-            {
-              OR: [
-                ...(dto.title ? [{ title: { equals: dto.title, mode: 'insensitive' as const } }] : []),
-                ...(dto.ISBN  ? [{ ISBN: dto.ISBN }] : []),
-              ],
+    if (dto.title || dto.ISBN) {
+      const existing = await this.prisma.book
+        .findFirst({
+          where: {
+            AND: [
+              { id_book: { not: bookId } },
+              {
+                OR: [
+                  ...(dto.title
+                    ? [
+                        {
+                          title: {
+                            equals: dto.title,
+                            mode: 'insensitive' as const,
+                          },
+                        },
+                      ]
+                    : []),
+                  ...(dto.ISBN ? [{ ISBN: dto.ISBN }] : []),
+                ],
+              },
+            ],
+          },
+        })
+        .catch(() => {
+          throw new InternalServerErrorException('Błąd bazy danych');
+        });
+
+      if (existing) {
+        throw new ConflictException(
+          'Książka o takim tytule lub ISBN już istnieje',
+        );
+      }
+    }
+
+    const publisher = dto.publisher_name
+      ? await this.getOrAddPublisher(dto.publisher_name)
+      : undefined;
+
+    const authors = dto.authors
+      ? await Promise.all(
+          dto.authors.map((a) =>
+            this.getOrAddAuthor(a.author_name, a.author_lastname),
+          ),
+        )
+      : undefined;
+
+    return this.prisma.book
+      .update({
+        where: { id_book: bookId },
+        data: {
+          ...(dto.title && { title: dto.title }),
+          ...(dto.year && { year: dto.year }),
+          ...(dto.cover && { cover: dto.cover }),
+          ...(dto.ISBN && { ISBN: dto.ISBN }),
+          ...(publisher && {
+            publisher: { connect: { id_publisher: publisher.id_publisher } },
+          }),
+          ...(authors && {
+            authors: { set: authors.map((a) => ({ id_author: a.id_author })) },
+          }),
+        },
+        select: {
+          id_book: true,
+          title: true,
+          year: true,
+          cover: true,
+          ISBN: true,
+          publisher: { select: { id_publisher: true, publisher_name: true } },
+          authors: {
+            select: {
+              id_author: true,
+              author_name: true,
+              author_lastname: true,
             },
-          ],
+          },
         },
       })
-      .catch(() => { throw new InternalServerErrorException('Błąd bazy danych'); });
-
-    if (existing) {
-      throw new ConflictException('Książka o takim tytule lub ISBN już istnieje');
-    }
+      .catch(() => {
+        throw new InternalServerErrorException(
+          'Nie udało się zaktualizować książki',
+        );
+      });
   }
-
-  const publisher = dto.publisher_name
-    ? await this.getOrAddPublisher(dto.publisher_name)
-    : undefined;
-
-  const authors = dto.authors
-    ? await Promise.all(
-        dto.authors.map((a) => this.getOrAddAuthor(a.author_name, a.author_lastname))
-      )
-    : undefined;
-
-  return this.prisma.book
-    .update({
-      where: { id_book: bookId },
-      data: {
-        ...(dto.title       && { title: dto.title }),
-        ...(dto.year        && { year: dto.year }),
-        ...(dto.cover       && { cover: dto.cover }),
-        ...(dto.ISBN        && { ISBN: dto.ISBN }),
-        ...(publisher       && { publisher: { connect: { id_publisher: publisher.id_publisher } } }),
-        ...(authors         && { authors: { set: authors.map((a) => ({ id_author: a.id_author })) } }),
-      },
-      select: {
-        id_book: true,
-        title: true,
-        year: true,
-        cover: true,
-        ISBN: true,
-        publisher: { select: { id_publisher: true, publisher_name: true } },
-        authors: { select: { id_author: true, author_name: true, author_lastname: true } },
-      },
-    })
-    .catch(() => { throw new InternalServerErrorException('Nie udało się zaktualizować książki'); });
-}
   async hardDeleteBook(bookId: number) {
-  await this.findBookOrThrow(bookId);
+    await this.findBookOrThrow(bookId);
 
-  await this.prisma.loan.deleteMany({
-    where: { copy: { book_id: bookId } },
-  });
+    await this.prisma.loan.deleteMany({
+      where: { copy: { book_id: bookId } },
+    });
 
-  await this.prisma.copy.deleteMany({ where: { book_id: bookId } });
+    await this.prisma.copy.deleteMany({ where: { book_id: bookId } });
 
-  return this.prisma.book.delete({ where: { id_book: bookId } });
-}
+    return this.prisma.book.delete({ where: { id_book: bookId } });
+  }
 }

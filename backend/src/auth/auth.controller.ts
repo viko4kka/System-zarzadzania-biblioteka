@@ -295,17 +295,19 @@ export class AuthController {
     return this.authService.removeUser(parseInt(id));
   }
 
-@Delete('deleteUser/:id')
-@HttpCode(HttpStatus.OK)
-@ApiOperation({
-  summary: 'Trwałe usunięcie użytkownika',
-  description: 'Tylko administrator. Kaskadowo usuwa wypożyczenia.',
-})
-async hardDeleteUser(@Param('id') id: string, @Req() req: Request) {
-  const payload = await this.authService.verifyToken(req);
-  if (!payload.is_Admin) {
-    throw new ForbiddenException('Tylko administrator może trwale usuwać użytkowników');
+  @Delete('deleteUser/:id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Trwałe usunięcie użytkownika',
+    description: 'Tylko administrator. Kaskadowo usuwa wypożyczenia.',
+  })
+  async hardDeleteUser(@Param('id') id: string, @Req() req: Request) {
+    const payload = await this.authService.verifyToken(req);
+    if (!payload.is_Admin) {
+      throw new ForbiddenException(
+        'Tylko administrator może trwale usuwać użytkowników',
+      );
+    }
+    return this.authService.hardDeleteUser(parseInt(id));
   }
-  return this.authService.hardDeleteUser(parseInt(id));
-}
 }

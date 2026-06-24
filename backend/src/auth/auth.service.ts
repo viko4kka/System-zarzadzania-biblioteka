@@ -232,12 +232,12 @@ export class AuthService {
     return isPasswordValid;
   }
 
-async hardDeleteUser(userId: number) {
-  const user = await this.prisma.user.findUnique({ where: { id: userId } });
-  if (!user) throw new NotFoundException('Użytkownik nie został znaleziony');
+  async hardDeleteUser(userId: number) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('Użytkownik nie został znaleziony');
 
-  await this.prisma.loan.deleteMany({ where: { user_id: userId } });
+    await this.prisma.loan.deleteMany({ where: { user_id: userId } });
 
-  return this.prisma.user.delete({ where: { id: userId } });
-}
+    return this.prisma.user.delete({ where: { id: userId } });
+  }
 }

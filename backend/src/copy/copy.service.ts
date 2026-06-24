@@ -1,4 +1,9 @@
-import { BadRequestException, NotFoundException, InternalServerErrorException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  NotFoundException,
+  InternalServerErrorException,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 
 @Injectable()
@@ -79,13 +84,13 @@ export class CopyService {
         select: {
           id_book: true,
         },
-      }).catch(() => {
+      })
+      .catch(() => {
         throw new InternalServerErrorException('Błąd bazy danych');
       });
 
     if (!book)
       throw new NotFoundException(`Książka o id ${id_book} nie istnieje`);
-
 
     const newCopy = await this.prisma.copy.create({
       data: {

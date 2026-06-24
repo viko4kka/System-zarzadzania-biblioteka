@@ -89,7 +89,6 @@ export class BookController {
     return this.bookService.getBook(parseInt(id));
   }
 
-
   @Patch('update/:id')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -104,15 +103,14 @@ export class BookController {
         cover: 'https://example.com/cover.jpg',
         publisher_name: 'SuperNowa',
         ISBN: '9788375352458',
-        authors: [
-          { author_name: 'Artur', author_lastname: 'Nowak' }
-        ],
+        authors: [{ author_name: 'Artur', author_lastname: 'Nowak' }],
       },
     },
   })
   async updateBook(
     @Param('id') id: string,
-    @Body() dto: {
+    @Body()
+    dto: {
       title?: string;
       year?: number;
       cover?: string;
@@ -124,22 +122,26 @@ export class BookController {
   ) {
     const payload = await this.authService.verifyToken(req);
     if (!payload.is_Admin) {
-      throw new ForbiddenException('Tylko administrator może modyfikować książki');
+      throw new ForbiddenException(
+        'Tylko administrator może modyfikować książki',
+      );
     }
     return this.bookService.updateBook(parseInt(id), dto);
   }
 
-@Delete('delete/:id')
-@HttpCode(HttpStatus.OK)
-@ApiOperation({
-  summary: 'Trwałe usunięcie książki',
-  description: 'Tylko administrator. Kaskadowo usuwa kopie i wypożyczenia.',
-})
-async hardDeleteBook(@Param('id') id: string, @Req() req: Request) {
-  const payload = await this.authService.verifyToken(req);
-  if (!payload.is_Admin) {
-    throw new ForbiddenException('Tylko administrator może trwale usuwać książki');
+  @Delete('delete/:id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Trwałe usunięcie książki',
+    description: 'Tylko administrator. Kaskadowo usuwa kopie i wypożyczenia.',
+  })
+  async hardDeleteBook(@Param('id') id: string, @Req() req: Request) {
+    const payload = await this.authService.verifyToken(req);
+    if (!payload.is_Admin) {
+      throw new ForbiddenException(
+        'Tylko administrator może trwale usuwać książki',
+      );
+    }
+    return this.bookService.hardDeleteBook(parseInt(id));
   }
-  return this.bookService.hardDeleteBook(parseInt(id));
-}
 }

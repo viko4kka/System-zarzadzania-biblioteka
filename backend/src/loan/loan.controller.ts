@@ -28,7 +28,8 @@ export class LoanController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Wypożyczenie kopii książki',
-    description: 'Wypożycza wybraną kopię książki dla zalogowanego użytkownika.',
+    description:
+      'Wypożycza wybraną kopię książki dla zalogowanego użytkownika.',
   })
   async loanBook(@Param('copy_id') copyIdParam: string, @Req() req: Request) {
     const payload = await this.authService.verifyToken(req);
@@ -39,7 +40,9 @@ export class LoanController {
 
     const copyId = Number(copyIdParam);
     if (!Number.isInteger(copyId) || copyId <= 0) {
-      throw new BadRequestException('copy_id musi być dodatnią liczbą całkowitą');
+      throw new BadRequestException(
+        'copy_id musi być dodatnią liczbą całkowitą',
+      );
     }
 
     return await this.loanService.loanBook(payload.id, copyId);
@@ -56,7 +59,9 @@ export class LoanController {
 
     const copyId = Number(copyIdParam);
     if (!Number.isInteger(copyId) || copyId <= 0) {
-      throw new BadRequestException('copy_id musi być dodatnią liczbą całkowitą');
+      throw new BadRequestException(
+        'copy_id musi być dodatnią liczbą całkowitą',
+      );
     }
 
     return await this.loanService.returnBook(payload.id, copyId);
@@ -66,7 +71,8 @@ export class LoanController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Historia wypożyczeń użytkownika',
-    description: 'Zwraca wszystkie wypożyczenia zalogowanego użytkownika, także zwrócone.',
+    description:
+      'Zwraca wszystkie wypożyczenia zalogowanego użytkownika, także zwrócone.',
   })
   @ApiQuery({
     name: 'page',
@@ -96,7 +102,8 @@ export class LoanController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Lista wypożyczeń użytkownika, które nie zostały jeszcze zwrócone',
-    description: 'Zwraca wszystkie aktywne wypożyczenia zalogowanego użytkownika.',
+    description:
+      'Zwraca wszystkie aktywne wypożyczenia zalogowanego użytkownika.',
   })
   @ApiQuery({
     name: 'page',
@@ -119,16 +126,19 @@ export class LoanController {
 
     const pageNum = page ? parseInt(page) : 1;
     const limitNum = limit ? parseInt(limit) : 10;
-    return await this.loanService.getUserActiveLoans(payload.id, pageNum, limitNum);
+    return await this.loanService.getUserActiveLoans(
+      payload.id,
+      pageNum,
+      limitNum,
+    );
   }
-
-
 
   @Get('loans/:user_id')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Historia wypożyczeń wybranego użytkownika',
-    description: 'Tylko administrator może zobaczyć wypożyczenia dowolnego użytkownika.',
+    description:
+      'Tylko administrator może zobaczyć wypożyczenia dowolnego użytkownika.',
   })
   @ApiQuery({
     name: 'page',
@@ -151,12 +161,16 @@ export class LoanController {
     const payload = await this.authService.verifyToken(req);
 
     if (!payload.is_Admin) {
-      throw new ForbiddenException('Tylko administrator może przeglądać wypożyczenia innych użytkowników');
+      throw new ForbiddenException(
+        'Tylko administrator może przeglądać wypożyczenia innych użytkowników',
+      );
     }
 
     const userId = Number(userIdParam);
     if (!Number.isInteger(userId) || userId <= 0) {
-      throw new BadRequestException('user_id musi być dodatnią liczbą całkowitą');
+      throw new BadRequestException(
+        'user_id musi być dodatnią liczbą całkowitą',
+      );
     }
 
     const pageNum = page ? parseInt(page) : 1;

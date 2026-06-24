@@ -476,5 +476,3 @@ echo "  TOTAL: $((PASS + FAIL))"
 echo "========================="
 
 rm -f $COOKIE_JAR
-EOF
-chmod +x /mnt/user-data/outputs/test.sh

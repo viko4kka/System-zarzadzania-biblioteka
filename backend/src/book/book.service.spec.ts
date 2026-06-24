@@ -62,9 +62,19 @@ describe('BookService', () => {
 
     it('powinno dodać książkę jeśli tytuł i ISBN są unikalne', async () => {
       mockPrisma.book.findFirst.mockResolvedValue(null); // brak duplikatu
-      mockPrisma.author.findFirst.mockResolvedValue({ id_author: 1, author_name: 'Andrzej', author_lastname: 'Sapkowski' });
-      mockPrisma.publisher.findFirst.mockResolvedValue({ id_publisher: 1, publisher_name: 'SuperNOWA' });
-      mockPrisma.book.create.mockResolvedValue({ id_book: 1, title: 'Wiedźmin' });
+      mockPrisma.author.findFirst.mockResolvedValue({
+        id_author: 1,
+        author_name: 'Andrzej',
+        author_lastname: 'Sapkowski',
+      });
+      mockPrisma.publisher.findFirst.mockResolvedValue({
+        id_publisher: 1,
+        publisher_name: 'SuperNOWA',
+      });
+      mockPrisma.book.create.mockResolvedValue({
+        id_book: 1,
+        title: 'Wiedźmin',
+      });
 
       const result = await service.addBook(dto);
 
@@ -73,7 +83,10 @@ describe('BookService', () => {
     });
 
     it('powinno rzucić ConflictException jeśli książka już istnieje', async () => {
-      mockPrisma.book.findFirst.mockResolvedValue({ id_book: 5, title: 'Wiedźmin' });
+      mockPrisma.book.findFirst.mockResolvedValue({
+        id_book: 5,
+        title: 'Wiedźmin',
+      });
 
       await expect(service.addBook(dto)).rejects.toThrow(ConflictException);
     });
@@ -82,13 +95,17 @@ describe('BookService', () => {
       mockPrisma.book.findFirst.mockResolvedValue(null);
       const badDto = { ...dto, ISBN: '123' }; // za krótki ISBN
 
-      await expect(service.addBook(badDto)).rejects.toThrow(BadRequestException);
+      await expect(service.addBook(badDto)).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('powinno rzucić InternalServerErrorException gdy baza zwróci błąd', async () => {
       mockPrisma.book.findFirst.mockRejectedValue(new Error('DB error'));
 
-      await expect(service.addBook(dto)).rejects.toThrow(InternalServerErrorException);
+      await expect(service.addBook(dto)).rejects.toThrow(
+        InternalServerErrorException,
+      );
     });
   });
 
@@ -99,7 +116,14 @@ describe('BookService', () => {
     it('powinno zwrócić paginowaną listę książek', async () => {
       mockPrisma.book.count.mockResolvedValue(25);
       mockPrisma.book.findMany.mockResolvedValue([
-        { id_book: 1, title: 'Wiedźmin', year: 1990, ISBN: '1234567890123', cover: null, authors: [] },
+        {
+          id_book: 1,
+          title: 'Wiedźmin',
+          year: 1990,
+          ISBN: '1234567890123',
+          cover: null,
+          authors: [],
+        },
       ]);
 
       const result = await service.searchBooks(1, 10);
@@ -130,7 +154,9 @@ describe('BookService', () => {
     it('powinno rzucić InternalServerErrorException gdy count się nie powiedzie', async () => {
       mockPrisma.book.count.mockRejectedValue(new Error('DB error'));
 
-      await expect(service.searchBooks(1, 10)).rejects.toThrow(InternalServerErrorException);
+      await expect(service.searchBooks(1, 10)).rejects.toThrow(
+        InternalServerErrorException,
+      );
     });
   });
 
@@ -176,7 +202,11 @@ describe('BookService', () => {
   // ──────────────────────────────────────────────
   describe('getOrAddAuthor', () => {
     it('powinno zwrócić istniejącego autora', async () => {
-      const existingAuthor = { id_author: 1, author_name: 'Andrzej', author_lastname: 'Sapkowski' };
+      const existingAuthor = {
+        id_author: 1,
+        author_name: 'Andrzej',
+        author_lastname: 'Sapkowski',
+      };
       mockPrisma.author.findFirst.mockResolvedValue(existingAuthor);
 
       const result = await service.getOrAddAuthor('Andrzej', 'Sapkowski');
@@ -187,7 +217,11 @@ describe('BookService', () => {
 
     it('powinno stworzyć nowego autora gdy nie istnieje', async () => {
       mockPrisma.author.findFirst.mockResolvedValue(null);
-      mockPrisma.author.create.mockResolvedValue({ id_author: 2, author_name: 'Nowy', author_lastname: 'Autor' });
+      mockPrisma.author.create.mockResolvedValue({
+        id_author: 2,
+        author_name: 'Nowy',
+        author_lastname: 'Autor',
+      });
 
       const result = await service.getOrAddAuthor('Nowy', 'Autor');
 
