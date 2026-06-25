@@ -21,7 +21,6 @@ export class LoanService {
   }
 
   async loanBook(userId: number, copyId: number) {
-
     const copy = await this.prisma.copy
       .findUnique({
         where: { id_copy: copyId },
@@ -57,12 +56,13 @@ export class LoanService {
         select: { copy_id: true, start_date: true },
       })
       .catch(() => {
-        throw new InternalServerErrorException('Nie udało się wypożyczyć książki');
+        throw new InternalServerErrorException(
+          'Nie udało się wypożyczyć książki',
+        );
       });
   }
 
   async returnBook(userId: number, copyId: number) {
-
     const activeLoan = await this.prisma.loan
       .findFirst({
         where: {
@@ -91,7 +91,10 @@ export class LoanService {
   }
 
   async getUserLoans(userId: number, page = 1, limit = 10) {
-    const { validPage, validLimit, skip } = this.normalizePagination(page, limit);
+    const { validPage, validLimit, skip } = this.normalizePagination(
+      page,
+      limit,
+    );
 
     const [loans, total] = await Promise.all([
       this.prisma.loan.findMany({
@@ -138,7 +141,10 @@ export class LoanService {
   }
 
   async getUserActiveLoans(userId: number, page: number, limit: number) {
-    const { validPage, validLimit, skip } = this.normalizePagination(page, limit);
+    const { validPage, validLimit, skip } = this.normalizePagination(
+      page,
+      limit,
+    );
 
     const [loans, total] = await Promise.all([
       this.prisma.loan.findMany({

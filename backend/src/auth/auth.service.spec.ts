@@ -28,7 +28,6 @@ describe('AuthService', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -58,7 +57,11 @@ describe('AuthService', () => {
     it('powinno zarejestrować nowego użytkownika', async () => {
       mockPrisma.user.findUnique.mockResolvedValue(null); // email wolny
       (bcrypt.hash as jest.Mock).mockResolvedValue('hashed_password');
-      mockPrisma.user.create.mockResolvedValue({ id: 1, name: 'Jan', is_Admin: false });
+      mockPrisma.user.create.mockResolvedValue({
+        id: 1,
+        name: 'Jan',
+        is_Admin: false,
+      });
       (jwt.sign as jest.Mock).mockReturnValue('fake-token');
 
       const result = await service.register(dto);
@@ -69,7 +72,10 @@ describe('AuthService', () => {
     });
 
     it('powinno rzucić ConflictException gdy email jest zajęty', async () => {
-      mockPrisma.user.findUnique.mockResolvedValue({ id: 5, mail: 'test@example.com' });
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id: 5,
+        mail: 'test@example.com',
+      });
 
       await expect(service.register(dto)).rejects.toThrow(ConflictException);
     });
@@ -77,13 +83,19 @@ describe('AuthService', () => {
     it('powinno rzucić InternalServerErrorException gdy baza zwróci błąd przy sprawdzeniu emaila', async () => {
       mockPrisma.user.findUnique.mockRejectedValue(new Error('DB error'));
 
-      await expect(service.register(dto)).rejects.toThrow(InternalServerErrorException);
+      await expect(service.register(dto)).rejects.toThrow(
+        InternalServerErrorException,
+      );
     });
 
     it('powinno hashować hasło przed zapisem', async () => {
       mockPrisma.user.findUnique.mockResolvedValue(null);
       (bcrypt.hash as jest.Mock).mockResolvedValue('hashed_password');
-      mockPrisma.user.create.mockResolvedValue({ id: 1, name: 'Jan', is_Admin: false });
+      mockPrisma.user.create.mockResolvedValue({
+        id: 1,
+        name: 'Jan',
+        is_Admin: false,
+      });
       (jwt.sign as jest.Mock).mockReturnValue('fake-token');
 
       await service.register(dto);
@@ -140,7 +152,11 @@ describe('AuthService', () => {
   // ──────────────────────────────────────────────
   describe('removeUser', () => {
     it('powinno oznaczyć użytkownika jako usuniętego', async () => {
-      mockPrisma.user.findUnique.mockResolvedValue({ id: 1, name: 'Jan', is_Removed: false });
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id: 1,
+        name: 'Jan',
+        is_Removed: false,
+      });
       mockPrisma.user.update.mockResolvedValue({ id: 1, is_Removed: true });
 
       const result = await service.removeUser(1);
@@ -180,7 +196,9 @@ describe('AuthService', () => {
     it('powinno rzucić NotFoundException gdy użytkownik nie istnieje', async () => {
       mockPrisma.user.findUnique.mockResolvedValue(null);
 
-      await expect(service.verifyPassword(999, 'haslo')).rejects.toThrow(NotFoundException);
+      await expect(service.verifyPassword(999, 'haslo')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

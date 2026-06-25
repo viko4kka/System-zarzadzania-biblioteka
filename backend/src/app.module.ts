@@ -7,7 +7,14 @@ import { CopyModule } from './copy/copy.module';
 import { LoanModule } from './loan/loan.module';
 
 @Module({
-  imports: [HealthModule, AuthModule, UserModule, BookModule, CopyModule,LoanModule],
+  imports: [
+    HealthModule,
+    AuthModule,
+    UserModule,
+    BookModule,
+    CopyModule,
+    LoanModule,
+  ],
   controllers: [],
   providers: [],
 })
