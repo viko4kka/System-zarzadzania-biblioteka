@@ -1,6 +1,8 @@
+import UProfile from "../../user/profile/page";
+
 function AProfile() {
     return (
-        <h1>Admin Profile</h1>
+        <UProfile />
     );
 }
 
