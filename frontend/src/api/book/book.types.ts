@@ -45,7 +45,23 @@ export interface RemoveBookResponseDto {
 }
 
 export interface BookDto {
+  id_book: number;
   title: string;
+  year: number;
+  cover: string;
+  ISBN: string;
+  publisher_id?: string | number;
+  publisher?: {
+    id_publisher: number;
+    publisher_name: string;
+  };
+  authors?: {
+    id_author: number;
+    author_name: string;
+    author_lastname: string;
+  }[];
+  totalCopies?: number;
+  availableCopies?: number;
 }
 
 export interface BookDataResponseDto {
