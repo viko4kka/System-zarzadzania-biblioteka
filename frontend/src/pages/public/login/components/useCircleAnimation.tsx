@@ -33,8 +33,8 @@ function FloatingCircle({ index }: { index: number }) {
 
   return (
     <motion.div
-      initial={{ ...initPosition[index], opacity: 0 }}
-      animate={{ ...circlesPosition, opacity: 1 }}
+      initial={{ ...initPosition[index], opacity: 1 }}
+      animate={{ ...circlesPosition }}
       transition={{ duration: 8, ease: "linear" }}
       drag
       dragTransition={{ bounceStiffness: 300, bounceDamping: 50 }}

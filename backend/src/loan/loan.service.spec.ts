@@ -9,7 +9,7 @@ import { PrismaService } from '../prisma.service';
 
 const mockPrisma = {
   copy: {
-    findUnique: jest.fn(),
+    findFirst: jest.fn(),
   },
   loan: {
     findFirst: jest.fn(),
@@ -40,56 +40,36 @@ describe('LoanService', () => {
   // loanBook
   // ──────────────────────────────────────────────
   describe('loanBook', () => {
-    it('powinno wypożyczyć dostępną kopię', async () => {
-      mockPrisma.copy.findUnique.mockResolvedValue({
-        id_copy: 1,
-        is_actual: true,
-      });
-      mockPrisma.loan.findFirst.mockResolvedValue(null); // brak aktywnego wypożyczenia
+    it('powinno wypożyczyć dostępną kopię książki', async () => {
+      mockPrisma.copy.findFirst.mockResolvedValue({ id_copy: 5 });
       mockPrisma.loan.create.mockResolvedValue({
-        copy_id: 1,
+        copy_id: 5,
         start_date: new Date(),
       });
 
       const result = await service.loanBook(42, 1);
 
-      expect(result.copy_id).toBe(1);
+      expect(result.copy_id).toBe(5);
       expect(mockPrisma.loan.create).toHaveBeenCalledTimes(1);
     });
 
-    it('powinno rzucić NotFoundException gdy kopia nie istnieje', async () => {
-      mockPrisma.copy.findUnique.mockResolvedValue(null);
-
-      await expect(service.loanBook(42, 999)).rejects.toThrow(
-        NotFoundException,
-      );
-    });
-
-    it('powinno rzucić NotFoundException gdy kopia jest nieaktualna (usunięta)', async () => {
-      mockPrisma.copy.findUnique.mockResolvedValue({
-        id_copy: 1,
-        is_actual: false,
-      });
-
-      await expect(service.loanBook(42, 1)).rejects.toThrow(NotFoundException);
-    });
-
-    it('powinno rzucić ConflictException gdy kopia jest już wypożyczona', async () => {
-      mockPrisma.copy.findUnique.mockResolvedValue({
-        id_copy: 1,
-        is_actual: true,
-      });
-      mockPrisma.loan.findFirst.mockResolvedValue({
-        id_loan: 99,
-        copy_id: 1,
-        return_date: null,
-      }); // aktywne wypożyczenie
+    it('powinno rzucić ConflictException gdy brak dostępnych kopii książki', async () => {
+      mockPrisma.copy.findFirst.mockResolvedValue(null);
 
       await expect(service.loanBook(42, 1)).rejects.toThrow(ConflictException);
     });
 
     it('powinno rzucić InternalServerErrorException gdy baza zwróci błąd przy szukaniu kopii', async () => {
-      mockPrisma.copy.findUnique.mockRejectedValue(new Error('DB error'));
+      mockPrisma.copy.findFirst.mockRejectedValue(new Error('DB error'));
+
+      await expect(service.loanBook(42, 1)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+    });
+
+    it('powinno rzucić InternalServerErrorException gdy baza zwróci błąd przy tworzeniu loanu', async () => {
+      mockPrisma.copy.findFirst.mockResolvedValue({ id_copy: 5 });
+      mockPrisma.loan.create.mockRejectedValue(new Error('DB error'));
 
       await expect(service.loanBook(42, 1)).rejects.toThrow(
         InternalServerErrorException,

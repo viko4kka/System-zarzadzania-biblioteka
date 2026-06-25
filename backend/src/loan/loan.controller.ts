@@ -24,28 +24,28 @@ export class LoanController {
     private readonly authService: AuthService,
   ) {}
 
-  @Post('loanBook/:copy_id')
+  @Post('loanBook/:book_id')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Wypożyczenie kopii książki',
     description:
-      'Wypożycza wybraną kopię książki dla zalogowanego użytkownika.',
+      'Wypożycza dostępną kopię wybranej książki dla zalogowanego użytkownika.',
   })
-  async loanBook(@Param('copy_id') copyIdParam: string, @Req() req: Request) {
+  async loanBook(@Param('book_id') bookIdParam: string, @Req() req: Request) {
     const payload = await this.authService.verifyToken(req);
 
     if (payload.is_Banned) {
       throw new ForbiddenException('Użytkownik jest zbanowany');
     }
 
-    const copyId = Number(copyIdParam);
-    if (!Number.isInteger(copyId) || copyId <= 0) {
+    const bookId = Number(bookIdParam);
+    if (!Number.isInteger(bookId) || bookId <= 0) {
       throw new BadRequestException(
-        'copy_id musi być dodatnią liczbą całkowitą',
+        'book_id musi być dodatnią liczbą całkowitą',
       );
     }
 
-    return await this.loanService.loanBook(payload.id, copyId);
+    return await this.loanService.loanBook(payload.id, bookId);
   }
 
   @Patch('returnBook/:copy_id')

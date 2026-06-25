@@ -28,6 +28,16 @@ const button = cva("button", {
         "text-main-navy-blue",
         "border-transparent font-display rounded-xl shadow-xl hover:bg-main-light-blue-hover cursor-pointer transition-all duration-300",
       ],
+      greenButton: [
+        "bg-greenBg",
+        "text-greenText",
+        "border-transparent font-display rounded-3xl shadow-xl hover:bg-greenBgHover cursor-pointer transition-all duration-300",
+      ],
+      loanButton: [
+        "bg-main-light-blue",
+        "text-main-navy-blue",
+        "border-transparent font-display rounded-xl shadow-xl hover:bg-main-light-blueHover cursor-pointer transition-all duration-300",
+      ],
     },
     size: {
       small: ["text-sm", "py-1", "px-4"],

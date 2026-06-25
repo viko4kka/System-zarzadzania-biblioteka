@@ -17,13 +17,17 @@
   --color-yellowText: #6c6e28;
   --color-borderGray: #e5e7eb;
   --color-greenBg: #d9f8c7;
+  --color-greenBgHover: #bef264;
   --color-greenText: #65a30d;
   --color-border-light: #e5e7eb;
 
+  --breakpoint-400: 400px;
   --breakpoint-500: 500px;
+  --breakpoint-700: 700px;
   --breakpoint-800: 800px;
 
   --color-main-light-blue: #E0F2FE;
+  --color-main-light-blueHover: #bae6fd;
   --color-highlight: #f0f8c5;
   --color-font-highlight: #6C6E28;
 }

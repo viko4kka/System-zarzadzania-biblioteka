@@ -2,26 +2,24 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 // Public
 import Login from "./pages/public/login/page";
-import Books from "./pages/public/books/page";
+import Catalog from "./pages/public/books/page";
 
 // Admin
-import ADashboard from "./pages/admin/dashboard/page";
 import AHistory from "./pages/admin/history/page";
 import ALoans from "./pages/admin/loans/page";
 import AProfile from "./pages/admin/profile/page";
 import AUsers from "./pages/admin/users/page";
 
 // User
-import UDashboard from "./pages/user/dashboard/page";
 import UHistory from "./pages/user/history/page";
 import ULoans from "./pages/user/loans/page";
 import UProfile from "./pages/user/profile/page";
 
 import MainLayout from "./layouts/MainLayout";
-import HomePage from "./pages/home/page"; 
-import ProtectedRoute from "./ProtectedRoute"; 
-import Forbidden from "./pages/Forbidden"; 
+import Forbidden from "./pages/Forbidden";
+import HomePage from "./pages/home/page";
 import NotFoundPage from "./pages/public/notFound/page";
+import ProtectedRoute from "./ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -33,10 +31,10 @@ const router = createBrowserRouter([
     element: <Login />,
   },
   {
-    path: "/books",
+    path: "/catalog",
     element: (
       <MainLayout>
-        <Books />
+        <Catalog />
       </MainLayout>
     ),
   },
@@ -48,14 +46,7 @@ const router = createBrowserRouter([
   {
     element: <ProtectedRoute />,
     children: [
-      {
-        path: "/user/dashboard",
-        element: (
-          <MainLayout>
-            <UDashboard />
-          </MainLayout>
-        ),
-      },
+  
       {
         path: "/user/history",
         element: (
@@ -85,14 +76,14 @@ const router = createBrowserRouter([
   {
     element: <ProtectedRoute admin />,
     children: [
-      {
-        path: "/admin/dashboard",
-        element: (
-          <MainLayout>
-            <ADashboard />
-          </MainLayout>
-        ),
-      },
+      // {
+      //   path: "/admin/dashboard",
+      //   element: (
+      //     <MainLayout>
+      //       <ADashboard />
+      //     </MainLayout>
+      //   ),
+      // },
       {
         path: "/admin/history",
         element: (
