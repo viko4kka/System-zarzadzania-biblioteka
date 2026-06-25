@@ -29,7 +29,8 @@ function EditBookModal({ bookId, isOpen, onClose }: EditBookModalProps) {
                 {isFetching ? (
                     <p className="text-center text-gray-500 py-6 font-medium animate-pulse">Loading book data...</p>
                 ) : bookData ? (
-                    <EditBookModalForm bookId={bookId!} bookData={bookData} onClose={handleClose} />
+                    
+                    <EditBookModalForm key={JSON.stringify(bookData)} bookId={bookId!} bookData={bookData} onClose={handleClose} />
                 ) : (
                     <p className="text-center text-red-500 py-6 font-medium">Failed to load book data.</p>
                 )}
