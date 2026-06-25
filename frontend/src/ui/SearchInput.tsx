@@ -13,6 +13,7 @@ const SearchInput = ({ value, onChange }: Props) => {
 
   useEffect(() => {
     onChange(debouncedValue);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedValue]);
 
   return (

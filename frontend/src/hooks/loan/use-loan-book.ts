@@ -8,7 +8,7 @@ export const useLoanBook = () => {
   return useMutation({
     mutationFn: (bookId: string) => loanApi.loanBook(bookId),
 
-    onSuccess: (data, bookId) => {
+    onSuccess: (bookId) => {
       toast.success(`You borrowed book successfully!`);
       queryClient.invalidateQueries({ queryKey: ["book data", bookId] });
       queryClient.invalidateQueries({ queryKey: ["books"] });
