@@ -396,11 +396,11 @@ LOGIN_RESPONSE=$(curl -s -X POST "$BASE_URL/api/auth/login" \
   -d "{\"mail\":\"$TEST_USER_MAIL\",\"password\":\"$TEST_USER_PASSWORD\"}")
 check "Logowanie zwykły użytkownik" "id" "$LOGIN_RESPONSE"
 
-LOAN_RESPONSE=$(curl -s -X POST "$BASE_URL/api/loan/loanBook/$TEST_COPY_ID" \
+LOAN_RESPONSE=$(curl -s -X POST "$BASE_URL/api/loan/loanBook/$EXISTING_BOOK_ID" \
   -b $COOKIE_JAR)
 check "Wypożyczenie książki" "copy_id" "$LOAN_RESPONSE"
 
-RESPONSE=$(curl -s -X POST "$BASE_URL/api/loan/loanBook/$TEST_COPY_ID" \
+RESPONSE=$(curl -s -X POST "$BASE_URL/api/loan/loanBook/$EXISTING_BOOK_ID" \
   -b $COOKIE_JAR)
 check "Wypożyczenie już wypożyczonej kopii" "już wypożyczona" "$RESPONSE"
 
@@ -416,11 +416,11 @@ RESPONSE=$(curl -s -X GET "$BASE_URL/api/loan/loans" \
   -b $COOKIE_JAR)
 check "Historia wypożyczeń" "id_loan" "$RESPONSE"
 
-RESPONSE=$(curl -s -X PATCH "$BASE_URL/api/loan/returnBook/$TEST_COPY_ID" \
+RESPONSE=$(curl -s -X PATCH "$BASE_URL/api/loan/returnBook/$EXISTING_BOOK_ID" \
   -b $COOKIE_JAR)
 check "Zwrot książki" "return_date" "$RESPONSE"
 
-RESPONSE=$(curl -s -X PATCH "$BASE_URL/api/loan/returnBook/$TEST_COPY_ID" \
+RESPONSE=$(curl -s -X PATCH "$BASE_URL/api/loan/returnBook/$EXISTING_BOOK_ID" \
   -b $COOKIE_JAR)
 check "Zwrot już zwróconej książki" "aktywnego wypożyczenia" "$RESPONSE"
 

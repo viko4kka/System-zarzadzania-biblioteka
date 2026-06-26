@@ -20,12 +20,65 @@ export class LoanService {
     return { validPage, validLimit, skip };
   }
 
-  async loanBook(userId: number, bookId: number) {
-    const availableCopy = await this.prisma.copy
+  async loanBook(userId: number, targetId: number) {
+    const requestedCopy = await this.prisma.copy
+      .findUnique({
+        where: { id_copy: targetId },
+        select: { id_copy: true, is_actual: true },
+      })
+      .catch(() => {
+        throw new InternalServerErrorException('Błąd bazy danych');
+      });
 
+    if (requestedCopy) {
+      if (!requestedCopy.is_actual) {
+        throw new NotFoundException('Kopia nie istnieje');
+      }
+
+      const activeLoan = await this.prisma.loan
+        .findFirst({
+          where: {
+            user_id: userId,
+            copy_id: requestedCopy.id_copy,
+            return_date: null,
+          },
+          select: { id_loan: true },
+        })
+        .catch(() => {
+          throw new InternalServerErrorException('Błąd bazy danych');
+        });
+
+      if (activeLoan) {
+        throw new ConflictException('Kopia już wypożyczona');
+      }
+
+      return await this.createLoan(userId, requestedCopy.id_copy);
+    }
+
+    const existingActiveLoan = await this.prisma.loan
       .findFirst({
         where: {
-          book_id: bookId,
+          user_id: userId,
+          return_date: null,
+          copy: {
+            book_id: targetId,
+            is_actual: true,
+          },
+        },
+        select: { id_loan: true },
+      })
+      .catch(() => {
+        throw new InternalServerErrorException('Błąd bazy danych');
+      });
+
+    if (existingActiveLoan) {
+      throw new ConflictException('Kopia już wypożyczona');
+    }
+
+    const availableCopy = await this.prisma.copy
+      .findFirst({
+        where: {
+          book_id: targetId,
           is_actual: true,
           loans: { none: { return_date: null } },
         },
@@ -39,11 +92,15 @@ export class LoanService {
       throw new ConflictException('Brak dostępnych kopii tej książki');
     }
 
+    return await this.createLoan(userId, availableCopy.id_copy);
+  }
+
+  private async createLoan(userId: number, copyId: number) {
     return await this.prisma.loan
       .create({
         data: {
           user_id: userId,
-          copy_id: availableCopy.id_copy,
+          copy_id: copyId,
           start_date: new Date(),
         },
         select: { copy_id: true, start_date: true },
@@ -55,14 +112,15 @@ export class LoanService {
       });
   }
 
-  async returnBook(userId: number, copyId: number) {
+  async returnBook(userId: number, targetId: number) {
     const activeLoan = await this.prisma.loan
       .findFirst({
         where: {
           user_id: userId,
-          copy_id: copyId,
           return_date: null,
+          OR: [{ copy_id: targetId }, { copy: { book_id: targetId } }],
         },
+        select: { id_loan: true },
       })
       .catch(() => {
         throw new InternalServerErrorException('Błąd bazy danych');

@@ -9,6 +9,7 @@ import { PrismaService } from '../prisma.service';
 
 const mockPrisma = {
   copy: {
+    findUnique: jest.fn(),
     findFirst: jest.fn(),
   },
   loan: {
@@ -25,6 +26,14 @@ describe('LoanService', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
+
+    mockPrisma.copy.findUnique.mockResolvedValue(null);
+    mockPrisma.copy.findFirst.mockResolvedValue(null);
+    mockPrisma.loan.findFirst.mockResolvedValue(null);
+    mockPrisma.loan.create.mockResolvedValue({
+      copy_id: 1,
+      start_date: new Date(),
+    });
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -54,9 +63,25 @@ describe('LoanService', () => {
     });
 
     it('powinno rzucić ConflictException gdy brak dostępnych kopii książki', async () => {
+      mockPrisma.copy.findUnique.mockResolvedValue(null);
       mockPrisma.copy.findFirst.mockResolvedValue(null);
+      mockPrisma.loan.findFirst.mockResolvedValue(null);
 
       await expect(service.loanBook(42, 1)).rejects.toThrow(ConflictException);
+    });
+
+    it('powinno rzucić ConflictException gdy użytkownik ma już aktywne wypożyczenie tej książki', async () => {
+      mockPrisma.copy.findUnique.mockResolvedValue(null);
+      mockPrisma.copy.findFirst.mockResolvedValue(null);
+      mockPrisma.loan.findFirst.mockResolvedValue({ id_loan: 10 });
+
+      await expect(service.loanBook(42, 1)).rejects.toThrow(ConflictException);
+    });
+
+    it('powinno rzucić NotFoundException gdy kopia została usunięta', async () => {
+      mockPrisma.copy.findUnique.mockResolvedValue({ id_copy: 99, is_actual: false });
+
+      await expect(service.loanBook(42, 99)).rejects.toThrow(NotFoundException);
     });
 
     it('powinno rzucić InternalServerErrorException gdy baza zwróci błąd przy szukaniu kopii', async () => {
