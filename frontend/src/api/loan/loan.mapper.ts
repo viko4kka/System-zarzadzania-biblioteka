@@ -26,7 +26,7 @@ const mapLoan = (dto: LoanDto): LoanData => ({
             ? new Date(dto.return_date)
             : null,
     book: {
-        id: dto.copy.book.id,
+        id_book: dto.copy.book.id_book,
         title: dto.copy.book.title,
         cover: dto.copy.book.cover,
         ISBN: dto.copy.book.ISBN,
