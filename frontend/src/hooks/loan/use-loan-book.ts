@@ -1,16 +1,21 @@
-import { useMutation } from "@tanstack/react-query";
-import type { BookActionDto } from "../../api/loan/loan.types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { loanApi } from "../../api/loan/loan.api";
+import toast from "react-hot-toast";
 
 export const useLoanBook = () => {
-    return useMutation({
-        mutationFn: (data: BookActionDto) => loanApi.loanBook(data),
+  const queryClient = useQueryClient();
 
-        onSuccess: (message) => {
-            console.log(message);
-        },
-        onError: (error) => {
-            console.error(error);
-        },
-    });
+  return useMutation({
+    mutationFn: (bookId: string) => loanApi.loanBook(bookId),
+
+    onSuccess: (bookId) => {
+      toast.success(`You borrowed book successfully!`);
+      queryClient.invalidateQueries({ queryKey: ["book data", bookId] });
+      queryClient.invalidateQueries({ queryKey: ["books"] });
+      queryClient.invalidateQueries({ queryKey: ["activeLoans"] });
+    },
+    onError: () => {
+      toast.error(`Borrowing was failed!`);
+    },
+  });
 };

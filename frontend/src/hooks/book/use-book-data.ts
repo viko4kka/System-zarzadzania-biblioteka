@@ -3,7 +3,7 @@ import { bookApi } from "../../api/book/book.api";
 
 export const useBookData = (id: string) => {
     return useQuery({
-        queryKey: ["book", id],
+        queryKey: ["book data", id],
         queryFn: () => bookApi.bookData(id),
         enabled: !!id,
     });

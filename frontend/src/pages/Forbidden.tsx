@@ -8,7 +8,7 @@ export default function Forbidden() {
 
   const handleGoBack = () => {
     navigate(
-      !user ? "/login" : user.isAdmin ? "/admin/dashboard" : "/user/dashboard",
+      !user ? "/login" : "/catalog",
     );
   };
 

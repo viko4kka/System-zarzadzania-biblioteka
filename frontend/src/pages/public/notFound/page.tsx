@@ -20,7 +20,7 @@ export default function NotFoundPage(){
             </p>
            
             <Button
-              onClick={()=>{navigate('/books')}}
+              onClick={()=>{navigate('/catalog')}}
               className="mt-6 flex items-center justify-center"
               intent="login"
               size="medium"

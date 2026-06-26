@@ -59,8 +59,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
             isLoggedIn={isLoggedIn}
             isAdmin={isAdmin}
           >
-            <main className="h-full w-full flex-1 overflow-auto p-4 pt-16 lg:p-16 lg:pt-24">
-              <div className="w-full min-w-full">{children}</div>
+            <main className="h-full w-full flex-1 overflow-auto p-4 pt-16 lg:p-6 lg:pt-24">
+              <div className="">{children}</div>
             </main>
           </Header>
         </div>

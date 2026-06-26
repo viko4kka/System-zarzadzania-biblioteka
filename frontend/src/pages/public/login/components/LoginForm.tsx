@@ -28,7 +28,7 @@ export default function LoginForm({ onSwitch }: LoginFormProps) {
   const onSubmit: SubmitHandler<LoginDto> = (data) => {
     loginUser(data, {
       onSuccess: () => {
-        navigate("/books");
+        navigate("/catalog");
       },
       onError: () => {
         toast.error("Invalid email or password");

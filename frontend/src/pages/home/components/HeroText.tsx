@@ -57,7 +57,7 @@ export const HeroText: React.FC<HeroTextProps> = ({ navigate, handleScrollToSect
                     intent="primary"
                     size="medium"
                     className="px-6 font-semibold"
-                    onClick={() => navigate("/books")}
+                    onClick={() => navigate("/catalog")}
                 >
                     Start &rarr;
                 </Button>

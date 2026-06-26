@@ -20,37 +20,30 @@ export class LoanService {
     return { validPage, validLimit, skip };
   }
 
-  async loanBook(userId: number, copyId: number) {
-    const copy = await this.prisma.copy
-      .findUnique({
-        where: { id_copy: copyId },
-        select: { id_copy: true, is_actual: true },
-      })
-      .catch(() => {
-        throw new InternalServerErrorException('Błąd bazy danych');
-      });
+  async loanBook(userId: number, bookId: number) {
+    const availableCopy = await this.prisma.copy
 
-    if (!copy || !copy.is_actual) {
-      throw new NotFoundException('Kopia o podanym id nie istnieje');
-    }
-
-    const activeLoan = await this.prisma.loan
       .findFirst({
-        where: { copy_id: copyId, return_date: null },
+        where: {
+          book_id: bookId,
+          is_actual: true,
+          loans: { none: { return_date: null } },
+        },
+        select: { id_copy: true },
       })
       .catch(() => {
         throw new InternalServerErrorException('Błąd bazy danych');
       });
 
-    if (activeLoan) {
-      throw new ConflictException('Kopia jest już wypożyczona');
+    if (!availableCopy) {
+      throw new ConflictException('Brak dostępnych kopii tej książki');
     }
 
     return await this.prisma.loan
       .create({
         data: {
           user_id: userId,
-          copy_id: copyId,
+          copy_id: availableCopy.id_copy,
           start_date: new Date(),
         },
         select: { copy_id: true, start_date: true },
