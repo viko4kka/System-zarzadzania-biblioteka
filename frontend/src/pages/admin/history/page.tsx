@@ -1,6 +1,8 @@
+import UHistory from "../../user/history/page";
+
 function AHistory() {
     return (
-        <h1>Admin History</h1>
+        <UHistory />
     );
 }
 

@@ -56,3 +56,11 @@ export interface ActiveLoansParams {
   page: number;
   limit: number;
 }
+
+export interface LoanData{
+    id_loan: number;
+    copy_id: string;
+    start_date: Date
+    return_date: Date | null
+    book: LoanBookDto
+}

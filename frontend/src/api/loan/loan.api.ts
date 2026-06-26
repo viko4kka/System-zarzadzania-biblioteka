@@ -1,9 +1,11 @@
 import { api } from "../api";
-import { mapLoanBookResponse, mapReturnBookResponse } from "./loan.mapper";
+import { mapLoanBookResponse, mapLoansResponse, mapReturnBookResponse } from "./loan.mapper";
 import type {
     ActiveLoansDto,
     ActiveLoansParams,
     LoanBookResponseDto,
+    LoanData,
+    LoansMeta,
     ReturnBookResponseDto
 } from "./loan.types";
 
@@ -34,4 +36,8 @@ export const loanApi = {
     );
     return response;
   },
+  loans: async (params: ActiveLoansParams): Promise<{ loans: LoanData[], meta: LoansMeta }> => {
+        const response = await api.get<ActiveLoansDto>(`${baseURL}/loans`, params);
+        return mapLoansResponse(response)
+    },
 };
